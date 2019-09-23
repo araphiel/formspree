@@ -83,8 +83,8 @@ req.send(data)`
 
     return (
       <>
-        <div className="col-1-1">
-          <div className="container">
+        <div className="container">
+          <div className="col-1-1">
             <div>
               <p>
                 Paste this code in your HTML, modifying it according to your

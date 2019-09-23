@@ -1,13 +1,6 @@
-{% extends 'layouts/base.html' %}
-
-{% block base %}
-  <div class="container narrow card">
-    <div class="row">
-      <div class="full-col">
-        <h1>Something went wrong</h1>
-
-        <p>Sorry, we're investigating.</p>
-      </div>
-    </div>
-  </div>
-{% endblock %}
+{% extends 'layouts/message.html' %}
+{% block content %}
+    <h1>Something went wrong</h1>
+    <p>Our team has been notified. If this error continues, please <a href="https://help.formspree.io/hc/en-us/requests/new" target="_blank">contact us</a> referencing the below error ID</p>
+    <p class="small">Error ID: <code>{{ trace_id }}</code></p>
+{% endblock content %}

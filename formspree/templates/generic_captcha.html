@@ -1,0 +1,33 @@
+{% extends 'layouts/message.html' %}
+
+{% block head_scripts %}
+<script type="text/javascript">
+  var success = function (response) {
+    document.querySelector('#passthrough').submit();
+  }
+
+  var onloadCallback = function () {
+    grecaptcha.render('recaptcha', {
+      sitekey: {{ config.RECAPTCHA_KEY | tojson | safe }},
+      callback: success,
+      size: window.innerWidth < 480 ? 'compact' : 'normal'
+    });
+  }
+</script>
+{% endblock head_scripts %}
+
+{% block content %}
+{% block instructions %}
+<h1>Almost There</h1>
+<p>Please click the box below to {{ action_description }}.</p>
+{% endblock %}
+
+<form action="{{ request.url }}" method="POST" id="passthrough">
+  <div id="recaptcha" style="text-align:center; display:inline-block"></div>
+</form>
+{% endblock content %}
+
+{% block tail_scripts %}
+<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer>
+</script>
+{% endblock tail_scripts %}

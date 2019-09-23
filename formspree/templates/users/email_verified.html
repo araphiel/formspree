@@ -1,0 +1,19 @@
+{% extends 'layouts/message.html' %}
+
+{% block head_scripts %}
+{% include 'amplitude.html' %}
+<script type="text/javascript">
+  amplitude.getInstance().logEvent('Verified', {
+    email: '{{email}}',
+  });
+  var identify = new amplitude.Identify().append('a', '{{email}}');
+  amplitude.getInstance().identify(identify);
+</script>
+{% endblock head_scripts %}
+
+{% block content %}
+    <h1>Email Verified</h1>
+    <p>This email is now active and may begin receiving form submissions.</p>
+    <p>If you initiated this request, you can now use this email to create forms
+        <a href="{{ url_for('forms') }}">here</a>.</p>
+{% endblock %}

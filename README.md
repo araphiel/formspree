@@ -1,7 +1,8 @@
+<!-- @format -->
+
 [![Build Status](https://travis-ci.org/formspree/formspree.svg?branch=master)](https://travis-ci.org/formspree/formspree)
 
-FORMSPREE.IO
-------------
+## FORMSPREE.IO
 
 Functional HTML forms. Hosted at [https://formspree.io](https://formspree.io).
 
@@ -36,23 +37,23 @@ From now on, when someone submits that form, we'll forward you the data as email
 
 Form inputs can have specially named name-attributes, which alter functionality. They are all prefixed with an underscore.
 
-### _replyto
+### \_replyto
 
 This value is used for the email's Reply-To field. This way you can directly "Reply" to the email to respond to the person who originally submitted the form.
 
-### _next
+### \_next
 
 By default, after submitting a form the user is shown the Formspree "Thank You" page. You can provide an alternative URL for that page.
 
-### _subject
+### \_subject
 
 This value is used for the email's subject, so that you can quickly reply to submissions without having to edit the subject line each time.
 
-### _cc
+### \_cc
 
 This value is used for the email's CC Field. This lets you send a copy of each submission to another email address. If you want to cc multiple emails, simply make the cc field a list of emails each separated by a comma.
 
-### _gotcha
+### \_gotcha
 
 Add this "honeypot" field to avoid spam by fooling scrapers. If a value is provided, the submission will be silently ignored. The input should be hidden with CSS.
 
@@ -62,20 +63,18 @@ Formspree Gold users can submit forms via AJAX. This even works cross-origin. Th
 
 ```javascript
 $.ajax({
-    url: "https://formspree.io/FORM_ID",
-    method: "POST",
-    data: {message: "hello!"},
-    dataType: "json"
-});
+  url: 'https://formspree.io/FORM_ID',
+  method: 'POST',
+  data: {message: 'hello!'},
+  dataType: 'json'
+})
 ```
 
---------
+---
 
 If you are experiencing issues, please take a look at the [FAQ](../../wiki/Frequently-Asked-Questions) in the wiki
 
-
-Running your own copy of Formspree
-----------------------------------
+## Running your own copy of Formspree
 
 ### Running on localhost
 
@@ -124,7 +123,7 @@ And you are ready to run the server:
     STRIPE_TEST_PUBLISHABLE_KEY='<STRIPE PUBLISHABLE>' \
     STRIPE_TEST_SECRET_KEY='<STRIPE SECRET>' \
     python -m unittest discover
-    
+
 Make sure that you do **NOT** use your actual `formspree` database when running tests. Doing so will cause you to lose all data located in your `formspree` database. Instead create a new database called `formspree-test`.
 
 You can also use [Foreman](https://github.com/ddollar/foreman) to automate running tests. After installing, run `foreman run venv/bin/python -m unittest discover` to run the entire test suite. To run a single test file, run `foreman run venv/bin/python -m unittest tests.test_users`. In this case, it will run only `tests/test_users.py`.
@@ -143,7 +142,6 @@ then
 
 Your new project will be running at [your project name].herokuapp.com.
 
-
 ### Dependencies
 
 Formspree requires a PostgreSQL database and uses SendGrid to send emails. If you're deploying to Heroku you can get a free Heroku Postgres database and a SendGrid account by running
@@ -155,9 +153,6 @@ Formspree requires a PostgreSQL database and uses SendGrid to send emails. If yo
 
 Take a look at the `formspree/settings.py` file for a list of environment variables that should be set in order for Formspree to work correctly.
 
+## Contributing
 
-
-Contributing
-----------------------------------
-
-Formspree is an open source project managed on GitHub. We welcome all contributions from the community, but please be sure to take a look at the [contributor guidelines](/.github/CONTRIBUTING.md) before opening an issue or pull request.
+We welcome all contributions from the community, but please be sure to take a look at the [contributor guidelines](/.github/CONTRIBUTING.md) before opening an issue or pull request.

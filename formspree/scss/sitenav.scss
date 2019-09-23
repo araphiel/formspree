@@ -1,0 +1,144 @@
+/**
+ * /* NAV
+ *
+ * @format
+ */
+
+// selective reset
+html,
+body,
+dl,
+dt,
+dd,
+ul,
+li,
+article,
+aside,
+canvas,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+nav ul,
+nav ol,
+nav dl {
+  list-style: none;
+}
+
+.site-nav {
+  font-family: $title-font;
+  font-weight: 600;
+  text-transform: uppercase;
+  height: $site-nav-height;
+}
+.site-nav,
+.main-nav,
+.account-nav {
+  display: flex;
+  width: 100%;
+}
+.account-nav {
+  justify-content: flex-end;
+}
+.site-nav .nav-icon {
+  width: 24px;
+}
+.site-nav li {
+  display: block;
+}
+.main-nav {
+  justify-content: flex-start;
+}
+.account-nav,
+.site-nav .account-icon {
+  justify-content: flex-end;
+}
+.main-nav .site-link,
+.account-nav .site-link {
+  flex: 0 1 auto;
+}
+.main-nav .site-link {
+  text-align: left;
+}
+.account-nav .site-link {
+  text-align: right;
+}
+.site-link a[href],
+.site-link.close-icon a,
+.account-icon {
+  padding: 22px;
+  display: block;
+}
+.account-icon a,
+.site-link.close-icon a {
+  font-size: 0;
+  line-height: 0;
+  margin: 0;
+}
+.site-link a[href] {
+  color: $accent-color;
+}
+.account-icon-path,
+.close-icon-path {
+  fill: $accent-color;
+}
+
+// > tablet
+@media only screen and (min-width: $media-break-mobile) {
+  .site-nav .account-icon,
+  .site-nav .close-icon {
+    display: none;
+  }
+}
+
+// < tablet
+@media only screen and (max-width: $media-break-mobile) {
+  .site-nav .account-nav {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    transition: width 0s linear;
+  }
+  #account-nav.expanded {
+    display: block;
+    width: 252px;
+    height: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: $surface-color-variant;
+    white-space: nowrap;
+    padding-bottom: 44px;
+    transition: all 0.14s linear;
+  }
+  #account-nav.expanded .site-link:not(.close-icon) a {
+    padding-top: 11px;
+    padding-bottom: 11px;
+  }
+}

@@ -1,75 +1,166 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<meta name="viewport" content="width=device-width" />
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>New Form Submission</title>
-    <link href="formspree/templates/email/pre_inline_style/email_styles.css" media="all" rel="stylesheet" type="text/css" />
+    <title>New Form Submission</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700|Open+Sans:400,700|Source+Code+Pro"
+          rel="stylesheet" data-premailer="ignore">
+    <link href="formspree/templates/email/pre_inline_style/email_styles.css" media="all" rel="stylesheet"
+          type="text/css"/>
+    <style media="screen" type="text/css" data-premailer="ignore">
+        @media only screen and (max-width: 640px) {
+            h1, h2, h3, h4 {
+                font-weight: 700 !important;
+                margin: 22px 0 5px !important;
+            }
+
+            h1 {
+                font-size: 22px !important;
+            }
+
+            h2 {
+                font-size: 18px !important;
+            }
+
+            h3 {
+                font-size: 16px !important;
+            }
+
+            .container {
+                padding-top: 22px !important;
+            }
+
+            .content-wrap {
+                padding: 11px !important;
+            }
+        }
+    </style>
 </head>
-<body itemscope itemtype="http://schema.org/EmailMessage">
-	<table class="body-wrap">
-		<tr>
-			<td></td>
-			<tr>
-				<td class="header">
-					<img src="{{url_for('static', filename='img/email_headers/new-submission@3x.png', _external=True)}}" width="400">
-				</td>
-			</tr>
-			<td class="container" width="600">
-				<div class="content">
-					<table class="main" width="100%" cellpadding="0" cellspacing="0">
-						<tr>
-							<td class="content-wrap">
-								<table width="100%" cellpadding="0" cellspacing="0">
-									<tr>
-										<td class="content-block">
-											Hey there,
-										</td>
-									</tr>
-									<tr>
-										<td class="content-block">
-											Someone just submitted your form on {{host}}. Here's what they had to say:
-										</td>
-									</tr>
-									<tr>
-										<td class="content-block aligncenter">
-											<table class="form">
-												<tr>
-													<td>
-														<table class="form-items" cellpadding="0" cellspacing="0">
-															{% for k in keys %}
-															<tr>
-																<td width="30%"><strong>{{k}}</strong></td>
-																<td><pre style="margin: 0; font-family: inherit; white-space: pre-wrap;">{{data.get(k,'')}}</pre></td>
-															</tr>
-															{% endfor %}
-														</table>
-													</td>
-												</tr>
-											</table>
-										</td>
-									</tr>
-									<tr>
-										<td class="content-block">
-											This form was submitted at {{ now }}.
-										</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-					</table>
-					<div class="footer">
-						<table width="100%">
-							<tr>
-								<td class="aligncenter content-block">You are receiving this because you confirmed this email address on <a href="{{config.SERVICE_URL}}">{{config.SERVICE_NAME}}</a>. If you don't remember doing that, or no longer wish to receive these emails, please remove the form on {{host}} or <a href="{{unconfirm_url}}">click here to unsubscribe</a> from this endpoint.</td>
-							</tr>
-                            {% include "email/footer.html" %}
-						</table>
-					</div>
-				</div>
-			</td>
-			<td></td>
-		</tr>
-	</table>
+<body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" bgcolor="#ffffff" itemscope
+      itemtype="http://schema.org/EmailMessage">
+
+<!-- body wrapper -->
+<table cellpadding="0" cellspacing="0" border="0" bgcolor="#f9f9f8" class="body-wrap">
+    <tr>
+        <td valign="top" align="center">
+
+            <!-- email wrapper -->
+            <table cellpadding="0" cellspacing="0" border="0" class="email-wrap">
+                <tr>
+                    <td class="container">
+
+                        <!-- header -->
+                        <table cellpadding="0" cellspacing="0" border="0" class="header">
+                            <tr>
+                                <td align="center">
+                                    <div class="brand-mark">
+                                        <img src="{{ config.CDN_URL }}/static/img/formspree-logo-mark.png"
+                                             alt="Formspree Logo Mark" width="66px" height="66px" class="logo">
+                                    </div>
+                                    <p class="email-title">New Form Submission</p>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- /header -->
+
+                        <!-- main wrapper -->
+                        <table cellpadding="0" cellspacing="0" border="0" class="main content">
+                            <tr>
+                                <td class="content-wrap">
+
+                                    <!-- content wrapper -->
+                                    <table cellpadding="0" cellspacing="0" border="0">
+                                        <tr>
+                                            <td align="center" class="content-block">
+                                                Hey there,<br><br>
+                                                Someone just submitted your form on {{ host }}. Here's what they had to
+                                                say:
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table cellpadding="0" cellspacing="0" border="0" class="message">
+                                        <tr>
+                                            <td align="center">
+                                                <table cellpadding="0" cellspacing="0" border="0" class="form">
+                                                    <tr>
+                                                        <td>
+                                                            <table cellpadding="0" cellspacing="0" border="0"
+                                                                   class="form-items">
+                                                                {% for k in keys %}
+                                                                    <tr>
+                                                                        <td>
+                                                                            <strong>{{ k }}:</strong><br>
+                                                                            <pre style="margin: 0; font-family: inherit; white-space: pre-wrap;">{{ data.get(k,'') }}</pre>
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endfor %}
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr align="center" class="content-block">
+                                                        <td>
+                                                            <span class="disclaimer">Submitted {{ now }}. <a href="{{ spam_url }}">Mark as spam</a></span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <!-- /content wrapper -->
+
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- /main wrapper -->
+
+                        {% if submission_count % config.PROMO_DELAY == 0 and not upgraded %}
+                            <!-- upsell -->
+                            <table cellpadding="0" cellspacing="0" border="0" class="upsell">
+                                <tr>
+                                    <td align="center" class="content-block">
+                                        {% set promo = [1, 2, 3, 4]|random %}
+                                        {% if promo == 1 %}
+                                            {% include "promo-text1.xml" %}
+                                        {% elif promo == 2 %}
+                                            {% include "promo-text2.xml" %}
+                                        {% elif promo == 3 %}
+                                            {% include "promo-text3.xml" %}
+                                        {% else %}
+                                            {% include "promo-text4.xml" %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                            <!-- /upsell -->
+                        {% endif %}
+
+                        <!-- footer -->
+                        <table cellpadding="0" cellspacing="0" border="0" class="footer">
+                            <tr>
+                                <td align="center" class="aligncenter content-block">You are receiving this because you
+                                    confirmed this email address on <a
+                                            href="{{ config.SERVICE_URL }}">{{ config.SERVICE_NAME }}</a>. If you don't
+                                    remember doing that, or no longer wish to receive these emails, please remove the
+                                    form on {{ host }} or <a href="{{ unconfirm_url }}">click here to unsubscribe</a>
+                                    from this endpoint.<br>
+                                </td>
+                            </tr>
+                            {% include "footer.xml" %}
+                        </table>
+                        <!-- /footer -->
+
+                    </td>
+                </tr>
+            </table>
+            <!-- /email wrapper -->
+
+        </td>
+    </tr>
+</table>
+<!-- /body wrapper -->
+
 </body>
 </html>

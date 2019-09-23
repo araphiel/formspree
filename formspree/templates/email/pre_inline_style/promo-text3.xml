@@ -1,0 +1,12 @@
+<table cellpadding="0" cellspacing="0" border="0" class="promo">
+    <tr>
+      <td class="content-block left">
+        <h3 class="title">Juggling lots of forms?</h3>
+        <p>See all your forms in one place, track total submission counts, and
+        manage several recipients. All for as little as $10 per month.</p>
+      </td>
+      <td class="content-block right">
+        <a href="{{ config.SERVICE_URL }}/plans?utm_campaign=sub-dashboard" class="btn-primary">View Plans</a>
+      </td>
+    </tr>
+  </table>

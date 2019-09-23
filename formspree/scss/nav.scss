@@ -1,25 +1,29 @@
-@import 'slicknav/core';
-@import 'slicknav/theme';
+/** @format */
 
-.slicknav_menu {
-  display:none;
-}
+// @import 'slicknav/core';
+// @import 'slicknav/theme';
+
+// .slicknav_menu {
+//   display: none;
+// }
 
 body > nav {
-  position: fixed;
+  // position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  background: inherit;
+  background: transparent;
   z-index: 9;
   padding: 7px 10px;
 
   height: 41px;
-  & + * { margin-top: 41px; }
-
-  &.scrolled {
-    box-shadow: 0 0 .6em rgba(17,17,17,0.3);
+  & + * {
+    margin-top: 41px;
   }
+
+  // &.scrolled {
+  //   box-shadow: 0 0 0.6em rgba(17, 17, 17, 0.3);
+  // }
 
   & > .greetings {
     float: left;
@@ -28,7 +32,12 @@ body > nav {
     float: right;
   }
   & .item {
-    margin-left: .5em;
+    margin-left: 0.5em;
+    a {
+      color: $accent-color;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
   }
 }
 
@@ -37,11 +46,12 @@ body > nav {
     display: none;
   }
 
-  .slicknav_menu {
-    display: block;
-  }
+  // .slicknav_menu {
+  //   display: block;
+  // }
 }
 
+/*
 .slicknav_menu {
   background: $light-green;
 
@@ -50,7 +60,7 @@ body > nav {
     float: right;
   }
  
-  /* our transcluded menu header ("Welcome...") */
+  // our transcluded menu header ("Welcome...") 
   h4 {
     padding: 0;
     margin: 0;
@@ -62,4 +72,4 @@ body > nav {
   .slicknav_btn { background-color: $dark-green }
   .slicknav_menutxt { text-shadow: 0 1px 3px $dark-green }
 }
-
+*/

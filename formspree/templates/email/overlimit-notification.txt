@@ -2,7 +2,7 @@ Hey there,
 
 Someone just submitted your form on {{host}}.
 
-You are past the limit of {{ limit }} free submissions per month. Never fear! We have safely stored the content of this form in our archive. You can access it by logging in at {{ url_for('register', _external=True) }} and upgrading your account.
+However, you are past the limit of {{ limit }} free submissions per month. Never fear! We have safely stored the content of this form in our submissions archive which you can access by signing up for a paid registration upgrade here: {{ config.SERVICE_URL }}/plans.
 
 ---
 

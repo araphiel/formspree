@@ -1,0 +1,12 @@
+<table cellpadding="0" cellspacing="0" border="0" class="promo">
+    <tr>
+      <td class="content-block left">
+        <h3 class="title">Concerned about spam?</h3>
+        <p>Hide your email address with private forms. Or disable emails and
+        send submissions to Google Sheets. As low as $10 per month.</p>
+      </td>
+      <td class="content-block right">
+        <a href="{{ config.SERVICE_URL }}/plans?utm_campaign=sub-spam" class="btn-primary">View Plans</a>
+      </td>
+    </tr>
+  </table>

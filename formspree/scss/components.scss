@@ -1,0 +1,290 @@
+/** @format */
+
+/* ------------------------------------------------------------------------- *
+ * modal
+ * ------------------------------------------------------------------------- */
+
+.modal {
+  position: relative;
+
+  .header {
+    display: inline-block;
+    width: 100%;
+    a.x {
+      float: right;
+      padding: 10px;
+      font-size: 1.7em;
+      text-decoration: none;
+    }
+    .title {
+      margin: 0;
+      padding: 0;
+      margin-top: 13px;
+      float: left;
+    }
+    & + * {
+      clear: both;
+    }
+  }
+
+  & > .modal-container {
+    z-index: -1000;
+    background: #fefefe;
+    position: fixed;
+    width: 770px;
+    margin-left: -385px;
+    left: 50%;
+    top: 15%;
+    padding: 0.3em 1.3em 1.3em 1.3em;
+    transform: translate(0, 10%);
+    opacity: 0;
+    transition-property: transform, opacity;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-out;
+
+    @media (max-width: $media-break-mobile) {
+      margin-left: 0;
+      position: absolute;
+      left: 0;
+      width: 100%;
+    }
+  }
+
+  @media (min-width: 761px) {
+    &.narrow {
+      & > .modal-container {
+        width: 500px;
+        margin-left: -250px;
+      }
+    }
+  }
+
+  .small {
+    font-size: 0.75em;
+  }
+
+  .identified {
+    background-size: 12% auto;
+    background-repeat: no-repeat;
+    background-position: right 10% center;
+    transition: none;
+    background-image: url('/static/img/cards/card.png');
+    &.visa {
+      background-image: url('/static/img/cards/visa.png');
+    }
+    &.mastercard {
+      background-image: url('/static/img/cards/mastercard.png');
+    }
+    &.amex {
+      background-image: url('/static/img/cards/amex.png');
+    }
+    &.dinersclub {
+      background-image: url('/static/img/cards/dinersclub.png');
+    }
+    &.discover {
+      background-image: url('/static/img/cards/discover.png');
+    }
+    &.jcb {
+      background-image: url('/static/img/cards/jcb.png');
+    }
+    &.visaelectron {
+      background-image: url('/static/img/cards/visaelectron.png');
+    }
+    &.maestro {
+      background-image: url('/static/img/cards/maestro.png');
+    }
+  }
+
+  &.target > .modal-container {
+    z-index: 1000;
+    opacity: 1;
+    -webkit-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    transform: translate(0, 0);
+    @media (max-width: $media-break-mobile) {
+      -webkit-transform: translate(0, -100%);
+      -ms-transform: translate(0, -100%);
+      transform: translate(0, -100%);
+    }
+  }
+
+  .red {
+    color: $alert-red;
+  }
+}
+
+.modal:not(.react):before,
+.modal-overlay {
+  content: '';
+  display: none;
+  background: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+}
+
+.modal.target:not(.react):before,
+.modal-overlay.open {
+  display: block;
+}
+
+/* ------------------------------------------------------------------------- *
+ * loaderButton
+ * ------------------------------------------------------------------------- */
+
+button.loader-button {
+  transition: none;
+
+  &.loading,
+  &.loading:hover {
+    color: transparent;
+    background-image: url(/static/img/loading.svg);
+    background-size: 1.5em;
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    background-position: center;
+  }
+}
+
+/* ------------------------------------------------------------------------- *
+ * switch
+ * ------------------------------------------------------------------------- */
+
+.switch {
+  .switch-label {
+    width: 100%;
+    padding-top: 4px;
+  }
+
+  .switch-container {
+    position: relative;
+    float: right;
+    height: 26px;
+
+    .switch-body {
+      display: inline-block;
+      width: 60px;
+      input {
+        display: none;
+      }
+    }
+
+    .switch-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: $disabled-color;
+      -webkit-transition: 0.4s;
+      transition: 0.4s;
+
+      &:before {
+        position: absolute;
+        content: '';
+        height: 18px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: 0.4s;
+        transition: 0.4s;
+      }
+    }
+
+    input:checked + .switch-slider {
+      background-color: $primary-color;
+    }
+
+    input:focus + .switch-slider {
+      box-shadow: 0 0 1px $primary-color;
+    }
+
+    input:checked + .switch-slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------- *
+ * bigButton
+ * ------------------------------------------------------------------------- */
+
+button.bigButton {
+  padding: 1.414em;
+  span.bigButton-icon {
+    height: 30px;
+    font-size: 30px;
+  }
+  span.bigButton-label {
+    font-size: larger;
+    white-space: normal;
+    text-align: left;
+    line-height: 1;
+    max-width: 80%;
+  }
+  &.disabled {
+    color: $type-color-on-primary-variant;
+    border-color: $disabled-color;
+    background: $disabled-color;
+  }
+}
+
+/* ------------------------------------------------------------------------- *
+ * actionInput
+ * ------------------------------------------------------------------------- */
+
+tr.actionInput-row {
+  td.buttons {
+    width: 1px;
+    white-space: nowrap;
+  }
+  button + button {
+    margin-left: 2px;
+  }
+  td input,
+  td select {
+    margin-bottom: 0;
+  }
+}
+
+.actionInput-label {
+  width: 100%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.actionInput-description {
+  padding-top: 4px;
+}
+
+/* ------------------------------------------------------------------------- *
+ * checkbox
+ * ------------------------------------------------------------------------- */
+
+.checkbox {
+  .checkbox-input {
+    display: none;
+  }
+
+  .checkbox-input + label.checkbox-label {
+    background-color: $background-color;
+    border: 2px solid $disabled-color;
+    height: 14px;
+    width: 14px;
+    padding: 3px;
+    display: inline-block;
+    position: relative;
+  }
+
+  .checkbox-input:checked + label.checkbox-label {
+    border: 2px solid $primary-color;
+    background-color: $primary-color;
+  }
+}

@@ -1,0 +1,72 @@
+{% extends 'layouts/message.html' %}
+
+{% block header %}
+    <i class="ion ion-thumbsup"></i>
+{% endblock header %}
+
+{% block content %}
+    <div id="loading-message">
+        <h1>Marking that as spam...</h1>
+    </div>
+    <div id="success-message" hidden>
+        <h1 class="title">Successfully Marked As Spam</h1>
+        <p class="explanation">You've successfully marked this message as spam. Your feedback will help prevent us from
+            delivering spam to
+            you in the future.</p>
+        <div id="undo-block">
+            <p class="small light">Didn't mean to do that?</p>
+            <button id="undo-button">Not spam</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(function () {
+                fetch("/api-int/spam", {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({id: "{{ id }}", spam: true})
+                }).then(response => response.json())
+                    .then(() => {
+                        document.getElementById("loading-message").setAttribute("hidden", true);
+                        document.getElementById("success-message").removeAttribute("hidden");
+                    })
+                    .catch(() => {
+                        document.querySelector("#loading-message h1").innerHTML = "Error Marking As Spam";
+                        document.querySelector("#loading-message").appendChild(document.createTextNode("An unknown error occurred. Please try reloading this page or contacting team@formspree.io"));
+                    });
+            }, 1000);
+        });
+
+        var button = document.getElementById("undo-button");
+        button.addEventListener("click", function () {
+            button.setAttribute("disabled", true);
+            fetch("/api-int/spam", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({id: "{{ id }}", spam: false})
+            }).then(response => response.json())
+                .then(() => {
+                    document.querySelector("#success-message .title").innerHTML = "Unmarked As Spam";
+                    document.querySelector("#success-message .explanation").innerHTML = "We've unmarked that message as spam. Continue on!";
+                    document.getElementById("undo-block").setAttribute("hidden", true);
+                })
+                .catch(error => {
+                    document.querySelector("#success-message .title").innerHTML = "Error Unmarking As Spam";
+                    document.querySelector("#success-message .explanation").innerHTML = "We weren't able to unmark that message as spam, please try again.";
+                    document.querySelector("#success-message #undo-block .small").innerHTML = "";
+                    button.removeAttribute("disabled");
+                });
+            {#var request = new XMLHttpRequest();#}
+            {#request.open("PATCH", "/api-int/spam");#}
+            {#request.setRequestHeader("Content-Type", "application/json");#}
+            {#request.send(JSON.stringify({id: "{{ id }}", spam: false}));#}
+            // TODO: make this only happen after a successful network request
+
+        });
+    </script>
+{% endblock content %}

@@ -1,20 +1,13 @@
 {% extends 'layouts/message.html' %}
 
-{% block base %}
-  <div class="container narrow card">
-	<div class="container" id="header">
-	  <div class="col-1-1 header success">
-		<i class="ion ion-thumbsup"></i>
-	  </div>
-	</div>
+{% block header %}
+<i class="ion ion-thumbsup"></i>
+{% endblock header %}
 
-	<div class="container">
-	  <div class="col-1-1">
-		<h1>Form submitted successfully</h1>
-		{% if next %}
-		  <a href="{{ next }}" class="button" style="margin-top: 1em;">Return to original site</a>
-		{% endif %}
-	  </div>
-	</div>
-  </div>
-{% endblock base %}
+{% block content %}
+<h1>Thanks!</h1>
+<p>The form was submitted successfully.</p>
+{% if next %}
+<a href="{{ next }}" style="margin-top: 1em;">Return to original site</a>
+{% endif %}
+{% endblock content %}

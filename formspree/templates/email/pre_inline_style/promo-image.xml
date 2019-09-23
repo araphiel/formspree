@@ -1,0 +1,18 @@
+<table cellpadding="0" cellspacing="0" border="0" class="promo">
+    <tr>
+      <td></td>
+      <td align="left" style="min-width: 25%; margin-right:20px" class="content-block">
+        <h3 style="margin-top:0">Missing a Submission?</h3>
+        <p>View your last 1000 submissions and export to CSV</p>
+        <a href="{{ config.SERVICE_URL }}/plans" class="btn-primary">Upgrade to Gold!</a>
+      </td>
+      <td align="left" style="min-width: 25%" class="content-block cta-block">
+        <div class="shadow">
+          <div class="shadow-overlay">
+            <img src="{{config.CDN_URL }}/static/img/productshot1.png" width="100%" style="width:100%; height:auto" alt="Formspree Product Shot 1">
+          </div>
+        </div>
+      </td>
+      <td></td>
+    </tr>
+  </table>
