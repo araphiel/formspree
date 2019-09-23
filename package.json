@@ -1,16 +1,30 @@
 {
   "dependencies": {
     "class-set": "^0.0.4",
+    "clipboard": "^2.0.4",
     "codemirror": "^5.39.2",
-    "is-valid-email": "0.0.2",
+    "is-valid-email": "0.0.4",
+    "js-md5": "^0.7.3",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.get": "^4.4.2",
+    "lodash.set": "^4.3.2",
+    "memoize-one": "^4.0.3",
+    "moment": "^2.22.2",
     "prettyaml": "^1.3.0",
+    "promise-window": "^1.2.1",
+    "prop-types": "^15.6.2",
     "query-string": "^5.1.1",
     "react": "^16.4.2",
     "react-codemirror2": "^5.1.0",
     "react-dom": "^16.4.2",
     "react-router-dom": "^4.3.1",
-    "url": "^0.11.0",
-    "valid-url": "^1.0.9"
+    "react-select": "^2.1.1",
+    "react-stripe-elements": "^2.0.1",
+    "react-table": "^6.8.6",
+    "shallow-equals": "^1.0.0",
+    "toastify-js": "github:fiatjaf/toastify-js#ae5b1359a27b3052412fa022d27da44b0a589808",
+    "uuid": "^3.3.2",
+    "whatwg-fetch": "^3.0.0"
   },
   "browserify": {
     "transform": [
@@ -29,6 +43,7 @@
     "@babel/preset-react": "7.0.0-rc.1",
     "babelify": "^9.0.0",
     "browserify": "^16.2.2",
+    "browserify-incremental": "^3.1.1",
     "envify": "^4.1.0",
     "prettier": "1.14.2",
     "uglify-js": "^3.4.7",

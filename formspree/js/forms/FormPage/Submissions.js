@@ -1,83 +1,195 @@
 /** @format */
 
-const toastr = window.toastr
-const fetch = window.fetch
+import LoaderButton from '../../components/LoaderButton'
+
+/** @format */
+
+const olark = window.olark
+
 const React = require('react')
 const prettyaml = require('prettyaml')
+const moment = require('moment')
+const shallowequals = require('shallow-equals')
 
-export default class FormSubmissions extends React.Component {
+import ReactTable from 'react-table'
+
+import ajax from '../../ajax'
+import {AccountContext, LoadingContext} from '../../Dashboard'
+import Checkbox from '../../components/Checkbox'
+import expandTableHOC from '../../components/ExpandTableHOC'
+
+const SubmissionsTable = expandTableHOC(ReactTable)
+
+class FormSubmissions extends React.Component {
   constructor(props) {
     super(props)
 
-    this.deleteSubmission = this.deleteSubmission.bind(this)
+    this.selectRow = this.selectRow.bind(this)
+    this.clearRows = this.clearRows.bind(this)
+    this.deleteSubmissions = this.deleteSubmissions.bind(this)
+    this.flagSubmissions = this.flagSubmissions.bind(this)
     this.showExportButtons = this.showExportButtons.bind(this)
 
     this.state = {
-      exporting: false
+      exporting: false,
+      animating: false,
+      selected: [],
+      filter: {spam: false}
     }
   }
 
+  componentDidMount() {
+    this.props.loadFormSubmissions(this.props.form.hashid, this.state.filter)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.scrollListener)
+    window.removeEventListener('resize', this.resizeListener)
+  }
+
+  renderActions() {
+    const {selected} = this.state
+    return (
+      <div
+        id="submissionActions"
+        className={!this.state.animating && selected.length ? 'active' : ''}
+      >
+        <div className="inner-frame right">
+          <span className="sub-count">
+            {selected.length} submission
+            {selected.length > 1 && 's'}
+          </span>
+          <button className="deemphasize" onClick={this.clearRows}>
+            cancel
+          </button>
+          <LoaderButton onClick={this.flagSubmissions}>
+            {shallowequals(this.state.filter, {spam: false})
+              ? 'spam'
+              : 'not spam'}
+          </LoaderButton>
+          <LoaderButton onClick={this.deleteSubmissions} className="emphasize">
+            delete
+          </LoaderButton>
+        </div>
+      </div>
+    )
+  }
+
+  renderFilter(filter, label) {
+    return (
+      <a
+        className={
+          'filter ' + (shallowequals(this.state.filter, filter) ? 'active' : '')
+        }
+        onClick={() => {
+          this.props
+            .loadFormSubmissions(this.props.form.hashid, filter)
+            .then(() => {
+              this.clearRows()
+              this.setState({filter})
+            })
+        }}
+      >
+        {label}
+      </a>
+    )
+  }
+
   render() {
-    let {form} = this.props
+    const {selected} = this.state
+    const {form} = this.props
+
+    if (!form.submissions) {
+      return null
+    }
+
+    const parseDate = d => {
+      let day = new Date(Date.parse(d))
+      let now = Date.now()
+      let format =
+        day.month === now.month ? 'MMM DD, HH:mm' : 'MMM DD YYYY, HH:mm'
+      return moment(day).format(format)
+    }
+
+    const parseValue = v => {
+      var value
+      try {
+        value = prettyaml.stringify(v)
+      } catch (e) {
+        value = JSON.stringify(v)
+      }
+      return value
+    }
+
+    const accessor = field => row => {
+      return field === '_date' ? parseDate(row[field]) : parseValue(row[field])
+    }
+
+    const renderExpandedRow = data => {
+      return (
+        <div className="submission-detail">
+          {form.fields
+            .filter(key => key !== '_id' && data.row[key])
+            .map(key => {
+              return (
+                <div className="submission-field" key={key}>
+                  <h4>{key}</h4>
+                  <pre>{data.row[key]}</pre>
+                </div>
+              )
+            })}
+        </div>
+      )
+    }
+
+    let columns = form.fields.map((f, i) => ({
+      id: f,
+      Header: f,
+      accessor: accessor(f),
+      show: i < 5 && (f !== '_id' && f !== '_errors')
+    }))
+
+    columns.push({
+      id: '_selector',
+      accessor: () => 'x', // this value is not important
+      Header: null,
+      Cell: rowInfo => (
+        <Checkbox
+          checked={selected.includes(rowInfo.row['_id'])}
+          onChange={this.selectRow(rowInfo.row['_id'])}
+          id={'cb-' + rowInfo.row['_id']}
+          className="rowSelect"
+        />
+      ),
+      width: 30,
+      filterable: false,
+      sortable: false,
+      resizable: false,
+      style: {textAlign: 'center'}
+    })
 
     return (
-      <div className="col-1-1 submissions-col">
-        {form.submissions.length ? (
-          <>
-            <table className="submissions responsive">
-              <thead>
-                <tr>
-                  <th>Submitted at</th>
-                  {form.fields
-                    .slice(1 /* the first field is 'date' */)
-                    .map(f => (
-                      <th key={f}>{f}</th>
-                    ))}
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {form.submissions.map(s => (
-                  <tr id={`submission-${s.id}`} key={s.id}>
-                    <td id={`p-${s.id}`} data-label="Submitted at">
-                      {new Date(Date.parse(s.date))
-                        .toString()
-                        .split(' ')
-                        .slice(0, 5)
-                        .join(' ')}
-                    </td>
-                    {form.fields
-                      .slice(1 /* the first field is 'date' */)
-                      .map(f => {
-                        var value
-                        try {
-                          value = prettyaml.stringify(s[f])
-                        } catch (e) {
-                          value = JSON.stringify(s[f])
-                        }
+      <div id="submissions">
+        <div className="container">
+          <div className="row">
+            <div className="col-1-2">
+              {this.renderFilter({spam: false}, 'inbox')} |{' '}
+              {this.renderFilter({spam: true}, 'spam')}
+            </div>
+          </div>
 
-                        return (
-                          <td data-label={f} key={f}>
-                            <pre>{value}</pre>
-                          </td>
-                        )
-                      })}
-                    <td>
-                      <button
-                        className="no-border"
-                        data-sub={s.id}
-                        onClick={this.deleteSubmission}
-                      >
-                        <i className="fa fa-trash-o delete" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="container">
-              <div className="row">
-                {this.state.exporting ? (
+          <SubmissionsTable
+            selectType="checkbox"
+            columns={columns}
+            SubComponent={renderExpandedRow}
+            data={form.submissions}
+            defaultPageSize={10}
+          />
+          {form.submissions.length > 0 && (
+            <>
+              <div className="row spacer">
+                {this.state.exporting &&
+                !shallowequals(this.state.filter, {spam: true}) ? (
                   <div className="col-1-1 right">
                     <a
                       target="_blank"
@@ -97,20 +209,14 @@ export default class FormSubmissions extends React.Component {
                   </div>
                 ) : (
                   <div className="col-1-1 right">
-                    <button
-                      onClick={this.showExportButtons}
-                      href={`/forms/${form.hashid}.json`}
-                    >
-                      Export
-                    </button>
+                    <button onClick={this.showExportButtons}>Export</button>
                   </div>
                 )}
               </div>
-            </div>
-          </>
-        ) : (
-          <h3>No submissions archived yet.</h3>
-        )}
+              {this.renderActions()}
+            </>
+          )}
+        </div>
       </div>
     )
   }
@@ -120,38 +226,87 @@ export default class FormSubmissions extends React.Component {
     this.setState({exporting: true})
   }
 
-  async deleteSubmission(e) {
-    e.preventDefault()
+  selectRow(id) {
+    return e => {
+      let selected = this.state.selected.slice()
+      if (selected.includes(id)) {
+        selected = selected.filter(x => x !== id)
+      } else {
+        selected.push(id)
+      }
+      let wasVisible = this.state.selected.length > 0
+      let isVisible = selected.length > 0
+      let changedVisibility = wasVisible !== isVisible
 
-    let subid = e.currentTarget.dataset.sub
-
-    try {
-      let resp = await fetch(
-        `/api-int/forms/${this.props.form.hashid}/submissions/${subid}`,
-        {
-          method: 'DELETE',
-          credentials: 'same-origin',
-          headers: {Accept: 'application/json'}
-        }
-      )
-      let r = await resp.json()
-
-      if (!resp.ok || r.error) {
-        toastr.warning(
-          r.error
-            ? `Failed to delete submission: ${r.error}`
-            : `Failed to delete submission.`
-        )
-        return
+      if (changedVisibility) {
+        isVisible ? olark('api.box.hide') : olark('api.box.show')
       }
 
-      toastr.success('Submission deleted.')
-      this.props.onUpdate()
-    } catch (e) {
-      console.error(e)
-      toastr.error(
-        'Failed to delete submission, see the console for more details.'
-      )
+      this.setState(prev => ({...prev, selected}))
     }
   }
+
+  clearRows() {
+    olark('api.box.show')
+    this.setState({selected: []})
+  }
+
+  async deleteSubmissions() {
+    let hashid = this.props.form.hashid
+    await ajax({
+      method: 'DELETE',
+      endpoint: `/api-int/forms/${hashid}/submissions`,
+      payload: {submissions: this.state.selected},
+      onSuccess: result => {
+        this.props.loadFormSubmissions(hashid, this.state.filter)
+        this.props.form.counter = result.counter
+        this.props.updateFormState(hashid, this.props.form)
+        this.setState({selected: []})
+        this.props.ready()
+      },
+      successMsg: 'Submissions deleted.',
+      errorMsg: 'Failed to delete submissions'
+    })
+  }
+
+  async flagSubmissions() {
+    let hashid = this.props.form.hashid
+    await ajax({
+      method: 'PATCH',
+      endpoint: `/api-int/forms/${hashid}/submissions`,
+      payload: {
+        submissions: this.state.selected,
+        operation: {spam: !shallowequals(this.state.filter, {spam: true})}
+      },
+      onSuccess: result => {
+        this.props.loadFormSubmissions(hashid, this.state.filter)
+        this.props.form.counter = result.counter
+        this.props.updateFormState(hashid, this.props.form)
+        this.setState({selected: []})
+        this.props.ready()
+      },
+      successMsg: 'Submissions updated.',
+      errorMsg: 'Failed to update submissions'
+    })
+  }
 }
+
+export default props => (
+  <>
+    <AccountContext.Consumer>
+      {({loadFormSubmissions, updateFormState}) => (
+        <LoadingContext.Consumer>
+          {({ready, wait}) => (
+            <FormSubmissions
+              {...props}
+              ready={ready}
+              wait={wait}
+              loadFormSubmissions={loadFormSubmissions}
+              updateFormState={updateFormState}
+            />
+          )}
+        </LoadingContext.Consumer>
+      )}
+    </AccountContext.Consumer>
+  </>
+)

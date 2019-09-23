@@ -2,8 +2,36 @@
 
 {% block nav %}{% endblock %}
 
-{% block footer %}
-<div class="container narrow">
-  <p class="footer">Powered by {{config.SERVICE_NAME}}. <a href="{{config.SERVICE_URL}}">Read more.</a></p>
+{% block base %}
+<div class="container narrow form-status-message">
+
+  {% if header %}
+  <div class="row" id="header">
+    <div class="col-1-1">
+      {% block header %}
+      {% endblock header %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="row">
+    <div class="col-1-1">
+      {% block content %}
+      {% endblock content %}
+    </div>
+  </div>
 </div>
-{% endblock %}
+{% endblock base %}
+
+{% block footer %}
+<div class="container narrow form-status-footer">
+  <div class="v-middle"><span style="font-size: small; margin-right: 5px">Powered by </span>
+    <a href="{{config.SERVICE_URL}}">
+      <img src="{{ url_for('static', filename='img/logo-small.png') }}">
+    </a>
+    <a href="{{config.SERVICE_URL}}" style="font-size: small; text-transform: uppercase">
+      {{config.SERVICE_NAME}}
+    </a>
+  </div>
+</div>
+{% endblock footer %}

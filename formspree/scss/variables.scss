@@ -1,0 +1,75 @@
+/** @format */
+
+/* ------------------------------------------------------------------------- *
+ * COLORS
+ * ------------------------------------------------------------------------- */
+
+// palette (don't use these outside this file)
+$snow: #f9f9f8;
+$white-smoke: #f7f7f4;
+$isabelline: #f2f2ee;
+$platinum: #e3e3da;
+$pale-silver: #c4beb9;
+$taupe-gray: #918f8d;
+$granite-gray: #666260;
+$harvard-crimson: #c4001a;
+$warm-black: #103742;
+$smoky-black: #0f0906;
+
+// brand colors
+$primary-color: $warm-black;
+$secondary-color: $platinum;
+$accent-color: $harvard-crimson;
+
+// background colors
+$background-color: $snow;
+$surface-color: $platinum;
+$surface-color-variant: $isabelline;
+
+// typography
+$type-color: $granite-gray;
+$type-color-variant: $smoky-black;
+$type-color-on-primary: $taupe-gray;
+$type-color-on-primary-variant: $platinum;
+$type-color-on-accent: $platinum;
+
+// notifications
+$warning-orange: #d87431;
+$info-blue: #4ca1a7;
+$alert-red: #cc3f36;
+$error-red: #cc3f36;
+
+// special purpose
+$border-color: rgba(0, 0, 0, 0.25);
+$code-background-color: rgba(255, 255, 255, 0.4);
+$input-background-color: rgba(255, 255, 255, 0.4);
+$disabled-color: #aaa;
+
+/* ------------------------------------------------------------------------- *
+ * FONTS
+ * ------------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,600,700');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,700');
+@import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700');
+
+$title-font: 'Poppins', sans-serif;
+$body-font: 'Open Sans', sans-serif;
+$code-font: 'Source Code Pro', monospace;
+
+/* ------------------------------------------------------------------------- *
+ * SPACING
+ * ------------------------------------------------------------------------- */
+
+$site-nav-height: 20px;
+
+$header-vertical-padding: 44px;
+$section-vertical-padding: 44px;
+
+$site-margins-wide: 88px;
+$site-margins-narrow: 44px;
+$site-margins-mobile: 22px;
+
+$spacing: 20px;
+
+$media-break-narrow: 1200px;
+$media-break-mobile: 768px;

@@ -3,16 +3,16 @@
 #settings {
   p#status {
     float: right;
-    color: $dark-blue;
     font-size: 0.7em;
     margin-right: 2%;
 
     &.error {
-      color: $red;
+      color: $error-red;
     }
   }
 
-  h4 {
+  .switch,
+  form:nth-of-type(2) {
     margin: 14px 0 4px 0 !important;
   }
 
@@ -25,67 +25,34 @@
     color: #999999;
   }
 
-  .switch-row {
-    // margin: auto;
-    // carefully placed to work within formspree grid
-    margin: 14px 0 0 -20px;
-    position: relative;
-    text-align: right;
-    .switch {
-      position: absolute;
-      display: inline-block;
-      width: 60px;
-      height: 26px;
-      right: 5%;
-      input {
-        display: none;
-      }
-    }
-  }
-
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    -webkit-transition: 0.4s;
-    transition: 0.4s;
-
-    &:before {
-      position: absolute;
-      content: '';
-      height: 18px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      -webkit-transition: 0.4s;
-      transition: 0.4s;
-    }
-  }
-
-  input:checked + .slider {
-    background-color: $dark-green;
-  }
-
-  input:focus + .slider {
-    box-shadow: 0 0 1px $dark-green;
-  }
-
-  input:checked + .slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
-  }
-
   .row {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
+  }
+}
+
+#apikey {
+  display: flex;
+  align-items: center;
+
+  & > div {
+    & > div {
+      display: flex;
+      font-size: 80%;
+      align-items: center;
+
+      & > span {
+        &:nth-child(2) {
+          flex-grow: 3;
+        }
+      }
+    }
+
+    button {
+      margin-left: 10%;
+    }
   }
 }

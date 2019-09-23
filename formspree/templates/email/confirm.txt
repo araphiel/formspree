@@ -1,28 +1,16 @@
-Thanks for using {{config.SERVICE_NAME}}. Congrats, you're one step away from making forms on {{host}} functional.
+Thank you for using {{config.SERVICE_NAME}}!
 
-All you have to do is click the link below to confirm your email. To prevent spamming, you'll have to repeat this step for every page where you insert your form. Note that you won't be receiving any emails from the site before you confirm your email.
+You're only one step away from making forms on {{host}} functional. Click the 'Activate Form' link below to begin receiving submissions from this form.
 
 Link: {{nonce_link}}
 
-{% if data and keys %}
-    In case it wasn't yourself the one who submitted this, here are the contents of the form:
+By visiting the link above, you agree to our Terms of Service and that you have read our Privacy Policy, which follow:
 
-    {% for k in keys %}
-    {{k}}:
-    {{data[k]}}
-
-    {% endfor %}
-{% endif %}
-
-ALERT: You will not receive any more emails unless you go to {{ nonce_link }} and confirm your address.
-
-We hope you enjoy using {{config.SERVICE_NAME}}. If you have any questions, feel free to shoot an email to {{config.CONTACT_EMAIL}}.
-
-Best,
-Lauri and Cole
+- http://docs.formspree.io/files/terms.pdf
+- http://docs.formspree.io/files/privacy.pdf
 
 ----
 
-Why did I receive this email?
+Why did I receive this?
 
-Someone (hopefully you?) used your email with the {{config.SERVICE_NAME}} API on {{host}}. If this wasn't you, no worries. This is the only email you'll get.
+This email address is configured as a recipient using the {{config.SERVICE_NAME}} API. If this isn't you, do nothing. This is the only email you'll get. If you have any questions, please contact the {{config.SERVICE_NAME}} Team at {{config.CONTACT_EMAIL}}.

@@ -1,5 +1,9 @@
 Hey there,
 
-You've reached 90% of the {{ config.SERVICE_NAME }} free monthly limit. You get up to {{ limit }} submissions per month for free. After that we will keep up to {{ config.ARCHIVED_SUBMISSIONS_LIMIT }} past submissions in our archive that you can access at any time if you upgrade.
+You've reached 90% of the {{ config.SERVICE_NAME }} free monthly limit. You get up to {{ limit }} submissions per month for free. After that, we will keep up to {{ config.ARCHIVED_SUBMISSIONS_LIMIT }} past submissions in our archive that you can access at any time when you upgrade to a paid plan.
 
-Upgrading is easy! Simply register at {{ url_for('register', _external=True) }}, and we'll automatically upgrade all your forms. In addition to getting unlimited monthly submissions, you get all the {{ config.UPGRADED_PLAN_NAME }} features ({{ url_for('index', _external=True) }}#features), including invisible emails, sitewide forms, and access to the submission archive.
+Upgrading is easy! Pick a plan at {{ config.SERVICE_URL }}/plans, and we'll automatically upgrade your form. In addition to getting unlimited monthly submissions, you get all the {{ config.UPGRADED_PLAN_NAME }} features ({{ config.SERVICE_URL }}/index#features), including invisible emails, sitewide forms, and access to the submission archive.
+
+---
+
+You are receiving this because you confirmed this email address on <a href="{{config.SERVICE_URL}}">{{config.SERVICE_NAME}}</a>. If you don't remember doing that, or no longer wish to receive these emails, please remove the form on {{host}} or visit {{unconfirm_url}} to unsubscribe from this endpoint.

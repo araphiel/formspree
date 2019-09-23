@@ -1,108 +1,119 @@
 <!doctype html>
 <html lang="{{ lang or 'en' }}">
+
 <head>
   <meta charset="UTF-8">
   <title>{% block title %}{{config.SERVICE_NAME}}{% endblock %}</title>
-  {% block meta %}{% endblock %}
+  {% block meta %}
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  {% endblock %}
   <!-- google optimize and analytics -->
   <style>.async-hide { opacity: 0 !important} </style>
-  <script>(function(a,s,y,n,c,h,i,d,e){s.className+=' '+y;h.start=1*new Date;
-  h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
-  (a[n]=a[n]||[]).hide=h;setTimeout(function(){i();h.end=null},c);h.timeout=c;
-  })(window,document.documentElement,'async-hide','dataLayer',4000,
-  {'GTM-KCSJ8DK':true});</script>
+  <script>(function (a, s, y, n, c, h, i, d, e) {
+      s.className += ' ' + y; h.start = 1 * new Date;
+      h.end = i = function () { s.className = s.className.replace(RegExp(' ?' + y), '') };
+      (a[n] = a[n] || []).hide = h; setTimeout(function () { i(); h.end = null }, c); h.timeout = c;
+    })(window, document.documentElement, 'async-hide', 'dataLayer', 4000,
+      { 'GTM-KCSJ8DK': true });</script>
   <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-  ga('create', '{{config.GA_KEY}}', 'auto');
-  ga('require', 'GTM-KCSJ8DK');
-  ga('send', 'pageview');
+    (function (i, s, o, g, r, a, m) {
+      i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+    ga('create', '{{config.GA_KEY}}', 'auto');
+    ga('require', 'GTM-KCSJ8DK');
+    ga('send', 'pageview');
   </script>
   <!-- end google optimize and analytics -->
-  <script src="//use.typekit.net/{{config.TYPEKIT_KEY}}.js"></script>
-  <script>try{Typekit.load();}catch(e){}</script>
   <link rel="icon" type="image/png" href="{{config.SERVICE_URL}}/static/img/favicon.ico">
-  <meta name="viewport" content="initial-scale=1">
   <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/v4-shims.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
   {% block head_scripts %}{% endblock %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='main.css' if config.DEBUG else 'main.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='main.css' if
+  config.DEBUG else 'main.min.css') }}">
+
+  <link rel="preload" href="{{ url_for('static', filename='img/loading.svg') }}" as="image">
+
 </head>
-<body class="{% block bodyclass %}{% endblock %}" id="{% block bodyid %}card{% endblock %}">
 
-  <noscript>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-      <div class="row">
-        <div class="container">
-            <div class="col-1-1">
-            {% for category, flashed in messages %}
-              <div class="alert-box {{ category }} banner">
-               {{ flashed|safe }}
-              </div>
-            {% endfor %}
-           </div>
-        </div>
-      </div>
-      {% endif %}
-    {% endwith %}
-  </noscript>
+<body class="site {% block bodyclass %}{% endblock %}" id="{% block bodyid %}card{% endblock %}">
+  <div class="site-container">
+    <header id="site-header">
 
-  {% block nav %}
-  <nav>
-    {% if g.user.is_authenticated %}
-      <div class="greetings">
-        <h4 class="light">Welcome {{ current_user.email }}
-          (<a href="{{ url_for('logout') }}">logout</a>)
-        </h4>
-      </div>
-      <div class="menu">
-        {% if request.path != '/' %}<span class="item"><a href="/">Home</a></span>{% endif %}
-        <span class="item"><a href="{{ url_for('dashboard') }}">Your forms</a></span>
-        <span class="item"><a href="{{ url_for('account') }}">{% if current_user.has_feature('dashboard') %}Your{% else %}Upgrade{% endif %} account</a></span>
-    {% else %}
-      <div class="greetings">
-        <h4 class="light">
-          <a href="http://testformspree.com/" target="_blank">Try Formspree!</a>
-        </h4>
-      </div>
-      <div class="menu">
-        {% if request.path != '/' %}<span class="item"><a href="/">Home</a></span>{% endif %}
-        {% if request.path != '/login' %}<span class="item"><a href="{{ url_for('login') }}" class="login">{{ config.UPGRADED_PLAN_NAME }} account login</a></span>{% endif %}
-    {% endif %}
-      </div>
-  </nav>
-  {% endblock %}
+      {% block nav %}
+      <nav class="site-nav">
 
-  <div class="row">
-    {% block base %}
-        <div class="container narrow card">
-            <h1>Nothing to see here</h1>
-        </div>
-    {% endblock base %}
+        <ul class="main-nav" id="main-nav">
+          <li class="site-link">
+            <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/logo.png') }}" width="44"
+                height="44" /></a>
+          </li>
+        </ul>
 
-    {% block footer %}{% endblock %}
+        <a class="site-link account-icon" id="open-hamburger">
+          <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29">
+            <g fill="none" fill-rule="evenodd">
+              <path d="M-2-2h32.9999986v32.9999986H-2z" />
+              <path class="account-icon-path" d="M14.499999.74999984C6.90999947.74999984.74999984 6.90999947.74999984 14.499999c0 7.5899996 6.15999963 13.7499992 13.74999916 13.7499992 7.5899996 0 13.7499992-6.1599996 13.7499992-13.7499992 0-7.59000022-6.1599996-13.74999916-13.7499992-13.74999916zm0 4.12499975c2.2824996 0 4.1249998 1.84250016 4.1249998 4.12499971 0 2.2824996-1.8425002 4.1249998-4.1249998 4.1249998-2.2824996 0-4.1249997-1.8425002-4.1249997-4.1249998 0-2.28249955 1.8425001-4.12499971 4.1249997-4.12499971zm0 19.52500021c-3.4374998 0-6.4762496-1.7600013-8.24999949-4.4275004.04125027-2.7362496 5.49999969-4.2349996 8.24999949-4.2349996 2.7362496 0 8.2087509 1.49875 8.2499995 4.2349996-1.7737511 2.6674991-4.8124997 4.4275004-8.2499995 4.4275004z" />
+            </g>
+          </svg>
+        </a>
+        <ul class="account-nav" id="account-nav">
+          <li class="site-link close-icon">
+            <a title="Close menu" id="close-hamburger">
+              <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21">
+                <g fill="none" fill-rule="evenodd">
+                  <path d="M-6-6h32.9999986v32.9999986H-6z" />
+                  <path class="close-icon-path" fill="#000" d="M20.1249984 2.8137492L18.1862485.87499959 10.499999 8.5612494 2.8137492.87499959.87499959 2.8137492 8.5612494 10.499999.87499959 18.1862485l1.93874961 1.9387499 7.6862498-7.6862498 7.6862495 7.6862498 1.9387499-1.9387499-7.6862498-7.6862495z" />
+                </g>
+              </svg>
+            </a>
+          </li>
+
+          {% if current_user.is_authenticated %}
+          <li class="site-link" id="forms-menu-item">
+            <a href="{{ url_for('dashboard') }}">Forms</a>
+          </li>
+          <li class="site-link" id="account-menu-item">
+            <a href="{{ url_for('account') }}">Account</a>
+          </li>
+          <li class="site-link">
+            <a title="Logout {{ current_user.email }}" href="{{ url_for('logout') }}">Logout</a>
+          </li>
+          {% else %}
+          <li class="site-link site-login text-link">
+            <a title="Account Login" href="{{ url_for('login') }}">Account Login</a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endblock %}
+
+    </header>
+
+    <div class="site-frame" id="site-frame">
+      {% block base %}
+      <div class="container narrow card">
+        <h1>Nothing to see here</h1>
+      </div>
+      {% endblock base %}
+
+      {% block footer %}{% endblock %}
+    </div>
+
+
+    {% block tail_scripts %}{% endblock %}
+    <script>
+      /* turning flask flash messages into js popup notifications */
+      window.popupMessages = {{ get_flashed_messages(with_categories = True) | json | safe }}
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js"></script>
+    <script src="{{ url_for('static', filename='bundle.js' if config.DEBUG else 'bundle.min.js') }}"></script>
+
   </div>
-
-
-  {% block tail_scripts %}{% endblock %}
-  <script src="//cdnjs.cloudflare.com/ajax/libs/SlickNav/1.0.3/jquery.slicknav.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.1/toastr.min.js"></script>
-  <script>
-    /* turning flask flash messages into js popup notifications */
-    window.popupMessages = {{ get_flashed_messages(with_categories=True) | json | safe }}
-  </script>
-  <script src="https://checkout.stripe.com/checkout.js"></script>
-  <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
-  <script type="text/javascript">
-    Stripe.setPublishableKey('{{config.STRIPE_PUBLISHABLE_KEY}}');
-  </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js"></script>
-  <script src="{{ url_for('static', filename='bundle.js' if config.DEBUG else 'bundle.min.js') }}"></script>
 </body>
+
 </html>

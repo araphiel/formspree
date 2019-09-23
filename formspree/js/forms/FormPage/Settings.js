@@ -1,215 +1,307 @@
 /** @format */
 
-const toastr = window.toastr
-const fetch = window.fetch
 const React = require('react')
+const {Link} = require('react-router-dom')
 
-import SettingsSwitch from './SettingsSwitch'
+import ajax from '../../ajax'
+import {LoadingContext, AccountContext} from '../../Dashboard'
+import LoaderButton from '../../components/LoaderButton'
+import Switch from '../../components/Switch'
+import DeleteSwitch from '../../components/DeleteSwitch'
+import ActionInput from '../../components/ActionInput'
 
-export default class FormSettings extends React.Component {
+class FormSettings extends React.Component {
   constructor(props) {
     super(props)
 
+    this.makeDirty = this.makeDirty.bind(this)
+    this.isDirty = this.isDirty.bind(this)
     this.update = this.update.bind(this)
+    this.resetAPIKey = this.resetAPIKey.bind(this)
     this.deleteForm = this.deleteForm.bind(this)
-    this.cancelDelete = this.cancelDelete.bind(this)
 
     this.state = {
-      deleting: false,
-      temporaryFormChanges: {}
+      pendingChanges: {}
     }
   }
 
   render() {
-    let {form} = this.props
-    let tmp = this.state.temporaryFormChanges
+    let {form, emails} = this.props
+    let pending = this.state.pendingChanges
+    const isSet = name => (name in pending ? pending[name] : form[name])
+
+    let emailOptions = emails.verified.map(a => ({
+      label: a + (form.hash ? ' (hard coded in the form action)' : ''),
+      value: a
+    }))
+
+    if (!emailOptions.filter(e => e.value === form.email).length) {
+      emailOptions.push({
+        label: form.email + ' (unverified)',
+        value: form.email,
+        disabled: true
+      })
+    }
 
     return (
       <>
         <div className="container" id="settings">
-          <SettingsSwitch
-            title="Form Enabled"
-            fieldName="disabled"
-            description="You can disable this form to cause it to stop receiving new
-              submissions temporarily or permanently."
-            onChangeFn={() => this.update}
-            checkedFn={() =>
-              'disabled' in tmp ? !tmp.disabled : !form.disabled
-            }
-          />
-          <SettingsSwitch
-            title="reCAPTCHA"
-            fieldName="captcha_disabled"
-            description="reCAPTCHA provides vital spam protection, but you can turn it
-              off if you need."
-            onChangeFn={() => this.update}
-            checkedFn={() =>
-              'captcha_disabled' in tmp
-                ? !tmp.captcha_disabled
-                : !form.captcha_disabled
-            }
-          />
-          <SettingsSwitch
-            title="Email Notifications"
-            fieldName="disable_email"
-            description="You can disable the emails Formspree sends if you just want to
-              download the submissions from the dashboard."
-            onChangeFn={() => this.update}
-            checkedFn={() =>
-              'disable_email' in tmp ? !tmp.disable_email : !form.disable_email
-            }
-          />
-          <SettingsSwitch
-            title="Submission Archive"
-            fieldName="disable_storage"
-            description="You can disable the submission archive if you don't want
-              Formspree to store your submissions."
-            onChangeFn={() => this.update}
-            checkedFn={() =>
-              'disable_storage' in tmp
-                ? !tmp.disable_storage
-                : !form.disable_storage
-            }
-          />
-
-          <div className="row">
-            <div className={this.state.deleting ? 'col-1-2' : 'col-5-6'}>
-              <h4>
-                {this.state.deleting
-                  ? 'Are you sure you want to delete?'
-                  : 'Delete Form'}
-              </h4>
-              <p className="description">
-                {this.state.deleting ? (
-                  <span>
-                    This will delete the form on <b>{form.host}</b> targeting{' '}
-                    <b>{form.email}</b> and all its submissions? This action{' '}
-                    <b>cannot</b> be undone.
-                  </span>
-                ) : (
-                  <span>
-                    Deleting the form will erase all traces of this form on our
-                    databases, including all the submissions.
-                  </span>
-                )}
-              </p>
-            </div>
-            <div
-              className={
-                (this.state.deleting ? 'col-1-2' : 'col-1-6') + ' switch-row'
-              }
+          <form onSubmit={e => this.update()(e.target.name.value, 'name')}>
+            <ActionInput
+              name="name"
+              label="Form Name"
+              description="The form name won't be shown to your visitors."
+              value={'name' in pending ? pending.name : form.name || ''}
+              placeholder="No name set"
+              onChange={this.makeDirty}
             >
-              {this.state.deleting ? (
+              <LoaderButton disabled={!this.isDirty('name', form.name)}>
+                Save
+              </LoaderButton>
+            </ActionInput>
+          </form>
+          <form onSubmit={e => this.update()(e.target.email.value, 'email')}>
+            <ActionInput
+              name="email"
+              label="Target Email"
+              description={
                 <>
-                  <button
-                    onClick={this.deleteForm}
-                    className="no-uppercase destructive"
-                  >
-                    Sure, erase everything
-                  </button>
-                  <button
-                    onClick={this.cancelDelete}
-                    className="no-uppercase"
-                    style={{marginRight: '5px'}}
-                  >
-                    No, don't delete!
-                  </button>
+                  Where to send submissions. To add a new email address, visit
+                  the <Link to="/account">account page</Link>.
                 </>
-              ) : (
-                <a onClick={this.deleteForm} href="#">
-                  <i className="fa fa-trash-o delete" />
-                </a>
+              }
+              value={pending.email || form.email || ''}
+              placeholder="Target email address"
+              onChange={this.makeDirty}
+              options={emailOptions}
+              disabled={form.hash || isSet('disable_email')}
+            >
+              {!form.hash && (
+                <LoaderButton
+                  disabled={
+                    isSet('disable_email') || !this.isDirty('email', form.email)
+                  }
+                >
+                  Save
+                </LoaderButton>
               )}
-            </div>
-          </div>
+            </ActionInput>
+          </form>
+          <Switch
+            fieldName="disabled"
+            description="Disable this form to stop receiving new
+              submissions."
+            onChange={this.update(true)}
+            checked={!isSet('disabled')}
+          >
+            <h4>Form Enabled</h4>
+          </Switch>
+          <Switch
+            fieldName="disable_email"
+            description={
+              form.routing_rules.length
+                ? "You won't receive emails in the main address linked to this form because you have routing rules enabled. You can add a new rule with the condition 'true' to always receive the submissions at an specific address."
+                : 'Enable or disable sending notification emails. Submissions will still be saved to the archive and dispatched to plugins.'
+            }
+            onChange={this.update(true)}
+            checked={
+              form.routing_rules.length ? false : !isSet('disable_email')
+            }
+            disabled={form.routing_rules.length}
+          >
+            <h4>Email Notifications</h4>
+          </Switch>
+          <Switch
+            fieldName="disable_storage"
+            description="Disable the submission archive if you don't want
+              Formspree to store your submissions."
+            onChange={this.update(true)}
+            checked={!isSet('disable_storage')}
+          >
+            <h4>Submission Archive</h4>
+          </Switch>
+          <Switch
+            fieldName="captcha_disabled"
+            description="reCAPTCHA provides spam protection. Disabling it will remove the reCAPTCHA redirect."
+            onChange={this.update(true)}
+            checked={!isSet('captcha_disabled')}
+          >
+            <h4>reCAPTCHA</h4>
+          </Switch>
+          {form.features.api_access && (
+            <>
+              <Switch
+                fieldName="api_enabled"
+                description={
+                  form.api_enabled
+                    ? 'Disabling API access will wipe out the current API key.'
+                    : "Allow programmatic access to this form's submissions."
+                }
+                onChange={this.update()}
+                checked={isSet('api_enabled')}
+              >
+                <h4>HTTP API</h4>
+              </Switch>
+              {form.api_enabled && (
+                <div className="row">
+                  <div className="container">
+                    <div id="apikey">
+                      <div>
+                        <div>
+                          <span>Master API key:</span>
+                          <span
+                            className="code"
+                            style={{margin: '10px', padding: '10px'}}
+                          >
+                            {form.apikey}
+                          </span>
+                        </div>
+                        <div>
+                          <span>Read-only API key:</span>
+                          <span
+                            className="code"
+                            style={{margin: '10px', padding: '10px'}}
+                          >
+                            {form.apikey_readonly}
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <LoaderButton onClick={this.resetAPIKey}>
+                          Reset API key
+                        </LoaderButton>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}{' '}
+            </>
+          )}
+          <DeleteSwitch
+            description="Deleting the form will erase all traces of this form on our
+              databases, including all the submissions."
+            warningMessage={
+              <>
+                This will delete the form on <b>{form.host}</b> targeting{' '}
+                <b>{form.email}</b> and all its submissions. This action{' '}
+                <b>cannot</b> be undone.
+              </>
+            }
+            onDelete={this.deleteForm}
+          >
+            <h4>Delete Form</h4>
+          </DeleteSwitch>
         </div>
       </>
     )
   }
 
-  async update(e) {
-    let attr = e.currentTarget.name
-    let val = !e.currentTarget.checked
+  makeDirty(e) {
+    let {name, value} = e.target
+    this.setState(state => {
+      state.pendingChanges[name] = value
+      return state
+    })
+  }
+
+  isDirty(fieldName, lastValue) {
+    return (
+      fieldName in this.state.pendingChanges &&
+      this.state.pendingChanges[fieldName] !== lastValue
+    )
+  }
+
+  async updateFormName(e) {
+    e.preventDefault()
+
+    await this.update()('name', this.state.pendingChanges['name'])
+    this.props.ready()
+  }
+
+  update(reversed = false) {
+    return async (val, attr) => {
+      this.setState(state => {
+        state.pendingChanges[attr] = reversed ? !val : val
+        return state
+      })
+
+      await ajax({
+        method: 'PATCH',
+        endpoint: `/api-int/forms/${this.props.form.hashid}`,
+        payload: {
+          [attr]: reversed ? !val : val
+        },
+        errorMsg: 'Failed to save settings',
+        successMsg: 'Settings saved.',
+        onSuccess: () => {
+          this.props.reloadSpecificForm(this.props.form.hashid).then(() => {
+            this.setState({pendingChanges: {}})
+            this.props.ready()
+          })
+        }
+      })
+    }
+  }
+
+  async resetAPIKey(e) {
+    e.preventDefault()
 
     this.setState(state => {
-      state.temporaryFormChanges[attr] = val
+      state.pendingChanges.apikey = ''
       return state
     })
 
-    try {
-      let resp = await fetch(`/api-int/forms/${this.props.form.hashid}`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-          [attr]: val
-        }),
-        credentials: 'same-origin',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-      let r = await resp.json()
-
-      if (!resp.ok || r.error) {
-        toastr.warning(
-          r.error
-            ? `Failed to save settings: ${r.error}`
-            : 'Failed to save settings.'
-        )
-        return
+    await ajax({
+      method: 'POST',
+      endpoint: `/api-int/forms/${this.props.form.hashid}/reset-apikey`,
+      errorMsg: 'Failed to reset API key',
+      successMsg: 'A new API key was generated and replaced the old one.',
+      onSuccess: async () => {
+        return this.props.reloadSpecificForm(this.props.form.hashid)
       }
+    })
 
-      toastr.success('Settings saved.')
-      this.props.onUpdate().then(() => {
-        this.setState({temporaryFormChanges: {}})
-      })
-    } catch (e) {
-      console.error(e)
-      toastr.error('Failed to update form. See the console for more details.')
-      this.setState({temporaryFormChanges: {}})
-    }
+    this.props.ready()
   }
 
-  cancelDelete(e) {
-    e.preventDefault()
-    this.setState({deleting: false})
-  }
+  async deleteForm() {
+    this.props.wait()
 
-  async deleteForm(e) {
-    e.preventDefault()
+    await ajax({
+      method: 'DELETE',
+      endpoint: `/api-int/forms/${this.props.form.hashid}`,
+      errorMsg: 'Failed to delete form',
+      successMsg: 'Form successfully deleted.',
+      onSuccess: async () => {
+        this.props.history.push('/forms')
 
-    if (this.props.form.counter > 0 && !this.state.deleting) {
-      // double-check the user intentions to delete,
-      // but only if the form has been used already.
-      this.setState({deleting: true})
-      return
-    }
-
-    this.setState({deleting: false})
-    try {
-      let resp = await fetch(`/api-int/forms/${this.props.form.hashid}`, {
-        method: 'DELETE',
-        credentials: 'same-origin',
-        headers: {
-          Accept: 'application/json'
-        }
-      })
-      let r = await resp.json()
-
-      if (resp.error || r.error) {
-        toastr.warning(
-          r.error
-            ? `failed to delete form: ${r.error}`
-            : 'failed to delete form.'
-        )
-        return
+        this.props.wait()
+        await this.props.reloadFormsList()
       }
+    })
 
-      toastr.success('Form successfully deleted.')
-      this.props.history.push('/forms')
-    } catch (e) {
-      console.error(e)
-      toastr.error('Failed to delete form. See the console for more details.')
-    }
+    this.props.ready()
   }
 }
+
+export default props => (
+  <>
+    <AccountContext.Consumer>
+      {({forms, emails, reloadFormsList, reloadSpecificForm}) => (
+        <LoadingContext.Consumer>
+          {({ready, wait}) => (
+            <FormSettings
+              {...props}
+              forms={forms}
+              emails={emails}
+              reloadFormsList={reloadFormsList}
+              reloadSpecificForm={reloadSpecificForm}
+              ready={ready}
+              wait={wait}
+            />
+          )}
+        </LoadingContext.Consumer>
+      )}
+    </AccountContext.Consumer>
+  </>
+)

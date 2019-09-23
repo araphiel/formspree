@@ -1,0 +1,3 @@
+The {{ plugin_kind }} plugin on form {{ form_name }} has been disabled due to multiple failures ({{ nfailures }}, to be exact).
+
+<p>You can reenable it in the dashboard.</p>

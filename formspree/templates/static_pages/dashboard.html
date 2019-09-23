@@ -1,0 +1,97 @@
+{% extends 'layouts/base.html' %}
+
+{% block head_scripts %}
+<!-- Code Mirror -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.2/codemirror.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.2/theme/oceanic-next.css" rel="stylesheet">
+<!-- Stripe -->
+<script src="https://js.stripe.com/v3/"></script>
+<!-- Amplitude -->
+<script type="text/javascript">
+  (function(e,t){var n=e.amplitude||{_q:[],_iq:{}};var r=t.createElement("script")
+  ;r.type="text/javascript";r.async=true
+  ;r.src="https://cdn.amplitude.com/libs/amplitude-4.4.0-min.gz.js"
+  ;r.onload=function(){if(e.amplitude.runQueuedFunctions){
+  e.amplitude.runQueuedFunctions()}else{
+  console.log("[Amplitude] Error: could not load SDK")}}
+  ;var i=t.getElementsByTagName("script")[0];i.parentNode.insertBefore(r,i)
+  ;function s(e,t){e.prototype[t]=function(){
+  this._q.push([t].concat(Array.prototype.slice.call(arguments,0)));return this}}
+  var o=function(){this._q=[];return this}
+  ;var a=["add","append","clearAll","prepend","set","setOnce","unset"]
+  ;for(var u=0;u<a.length;u++){s(o,a[u])}n.Identify=o;var c=function(){this._q=[]
+  ;return this}
+  ;var l=["setProductId","setQuantity","setPrice","setRevenueType","setEventProperties"]
+  ;for(var p=0;p<l.length;p++){s(c,l[p])}n.Revenue=c
+  ;var d=["init","logEvent","logRevenue","setUserId","setUserProperties","setOptOut","setVersionName","setDomain","setDeviceId","setGlobalUserProperties","identify","clearUserProperties","setGroup","logRevenueV2","regenerateDeviceId","logEventWithTimestamp","logEventWithGroups","setSessionId","resetSessionId"]
+  ;function v(e){function t(t){e[t]=function(){
+  e._q.push([t].concat(Array.prototype.slice.call(arguments,0)))}}
+  for(var n=0;n<d.length;n++){t(d[n])}}v(n);n.getInstance=function(e){
+  e=(!e||e.length===0?"$default_instance":e).toLowerCase()
+  ;if(!n._iq.hasOwnProperty(e)){n._iq[e]={_q:[]};v(n._iq[e])}return n._iq[e]}
+  ;e.amplitude=n})(window,document);
+</script>
+<!-- Olark -->
+<script type="text/javascript" async>
+  ;(function(o,l,a,r,k,y){if(o.olark)return;
+  r="script";y=l.createElement(r);r=l.getElementsByTagName(r)[0];
+  y.async=1;y.src="//"+a;r.parentNode.insertBefore(y,r);
+  y=o.olark=function(){k.s.push(arguments);k.t.push(+new Date)};
+  y.extend=function(i,j){y("extend",i,j)};
+  y.identify=function(i){y("identify",k.i=i)};
+  y.configure=function(i,j){y("configure",i,j);k.c[i]=j};
+  k=y._={s:[],t:[+new Date],c:{},l:a};
+  })(window,document,"static.olark.com/jsclient/loader.js");
+  /* Add configuration calls below this comment */
+  olark.identify('{{config.OLARK_KEY}}');
+  olark.configure('system.hb_primary_color', '#c4001a');
+  olark.configure('system.hb_detached', true);
+  olark.configure('system.hb_custom_style', {
+    general: { 
+      fonts: ['Open Sans', 'sans-serif'],
+      corners: 'hard',
+      secondaryColor: '#918f8d'
+    }
+  });
+</script>
+<!-- Formspree -->
+<script>
+  window.formspree = {{ params | tojson | safe }}
+</script>
+{% endblock %}
+
+{% block bodyclass %}dashboard{% endblock%}
+
+{% block base %}
+<div class="section" id="header">
+  <div class="container center">
+    {% block sectiontitle %}{% endblock %}
+  </div>
+</div>
+
+<div class="section">
+    <div id="body">
+      {% block section %}
+      {% endblock %}
+    </div>
+</div>
+
+<div class="section grey">
+  <div class="container narrow" id="footer">
+    <div class="col-1-2">
+      <p>If you have a problem, please look <a href="http://help.formspree.io/">here</a> first. To sign up for our
+        newsletter, use the form on the right.</p>
+      <p>For a quick demo of Formspree, <a href="https://test.formspree.io/" target="_blank">click here</a>.</p>
+    </div>
+    <div class="col-1-2">
+      <form method="POST" action="{{config.API_ROOT}}/{{config.NEWSLETTER_EMAIL}}">
+        <input type="text" name="name" placeholder="Your name" required />
+        <input type="email" name="_replyto" placeholder="Your email" required />
+        <input type="text" name="_gotcha" style="display:none">
+        <input type="hidden" name="_format" value="plain" style="display:none">
+        <button style="width: 100%" type="submit">Get Our Newsletter</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock base %}

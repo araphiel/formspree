@@ -1,6 +1,6 @@
-We have successfully downgraded your subscription from {{ config.SERVICE_NAME }} {{ config.UPGRADED_PLAN_NAME }}. If you didn't mean for this to happen you can easily resubscribe from your {{ config.SERVICE_NAME }} dashboard ({{ url_for('account') }}).
+We have successfully downgraded your subscription from {{ config.SERVICE_NAME }} {{ config.UPGRADED_PLAN_NAME }}. If you didn't mean for this to happen you can easily resubscribe from your {{ config.SERVICE_NAME }} dashboard ({{ config.SERVICE_URL }}/account).
 
-Please note that your form will no longer have unlimited submissions and other {{ config.UPGRADED_PLAN_NAME }} features ({{ url_for('index') }}#features).
+Please note that your form will no longer have unlimited submissions and other {{ config.UPGRADED_PLAN_NAME }} features ({{ config.SERVICE_URL }}/index#features).
 
 ---
 

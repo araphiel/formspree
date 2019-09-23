@@ -1,0 +1,45 @@
+<html>
+
+<head>
+</head>
+
+<body>
+  <form action="http://localhost:5000/lkorxjrz" method="POST">
+    <label>
+      Your email:
+      <input type="text" name="_replyto">
+    </label>
+    <label>
+      Your message:
+      <textarea name="message"></textarea>
+    </label>
+
+    <!-- your other form fields go here -->
+
+    <button type="submit">Send</button>
+  </form>
+
+
+  <script>
+    (function (window, document) {
+      const PUB_API_KEY = "273e6592e1827796959a8d2fffd3b8f2b57c1dea"
+      const URL = "http://localhost:5000/api/0/forms/lkorxjrz/submissions"
+
+      function bootstrap() {
+        fetch(URL, {
+          headers: {
+            'Authorization': 'Basic ' + btoa(":" + PUB_API_KEY)
+          }
+        }).then(res => res.json())
+          .then(response => console.log('Success:', JSON.stringify(response)))
+          .catch(error => console.error('Error:', error));
+
+
+      }
+      window.addEventListener('load', bootstrap)
+    })(window, document)
+  </script>
+
+</body>
+
+</html>

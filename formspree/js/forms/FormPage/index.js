@@ -1,44 +1,59 @@
 /** @format */
 
-const toastr = window.toastr
-const fetch = window.fetch
 const React = require('react')
-const {Route, Link, NavLink, Redirect} = require('react-router-dom')
+const {Route, NavLink, Redirect} = require('react-router-dom')
 
 import Portal from '../../Portal'
 import Integration from './Integration'
 import Submissions from './Submissions'
 import Settings from './Settings'
+import Routing from './Routing'
 import Whitelabel from './Whitelabel'
-import FormDescription from './FormDescription'
+import Plugins from './Plugins'
+import {AccountContext} from '../../Dashboard'
 
-export default class FormPage extends React.Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      form: null
-    }
-
-    this.fetchForm = this.fetchForm.bind(this)
-  }
-
-  async componentDidMount() {
-    this.fetchForm()
-  }
-
+class FormPage extends React.Component {
   render() {
     let hashid = this.props.match.params.hashid
 
+    var form
+    for (let i = 0; i < this.props.forms.length; i++) {
+      if (this.props.forms[i].hashid === hashid) {
+        form = this.props.forms[i]
+        break
+      }
+    }
+
     return (
       <>
-        <Portal to=".menu .item:nth-child(2)">
-          <Link to="/forms">Your forms</Link>
-        </Portal>
         <Portal to="#header .center">
           <h1>Form Details</h1>
-          {this.state.form && (
-            <FormDescription prefix="For " form={this.state.form} />
+          {form && (
+            <h2 className="form-description">
+              for{' '}
+              {form.name ? (
+                form.name
+              ) : (
+                <>
+                  <span className="code">
+                    {!form.hash ? (
+                      form.hashid
+                    ) : form.host ? (
+                      <>
+                        {form.host}
+                        {form.sitewide
+                          ? form.host.slice(-1)[0] === '/'
+                            ? '*'
+                            : '/*'
+                          : ''}
+                      </>
+                    ) : (
+                      form.email
+                    )}
+                  </span>
+                </>
+              )}
+            </h2>
           )}
         </Portal>
         <Route
@@ -46,91 +61,75 @@ export default class FormPage extends React.Component {
           path={`/forms/${hashid}`}
           render={() => <Redirect to={`/forms/${hashid}/submissions`} />}
         />
-        {this.state.form && (
-          <>
-            <h4 className="tabs">
-              <NavLink
-                to={`/forms/${hashid}/integration`}
-                activeStyle={{color: 'inherit', cursor: 'normal'}}
-              >
-                Integration
-              </NavLink>
-              <NavLink
-                to={`/forms/${hashid}/submissions`}
-                activeStyle={{color: 'inherit', cursor: 'normal'}}
-              >
-                Submissions
-              </NavLink>
-              <NavLink
-                to={`/forms/${hashid}/settings`}
-                activeStyle={{color: 'inherit', cursor: 'normal'}}
-              >
-                Settings
-              </NavLink>
-              {this.state.form.features.whitelabel && (
-                <NavLink
-                  to={`/forms/${hashid}/whitelabel`}
-                  activeStyle={{color: 'inherit', cursor: 'normal'}}
-                >
-                  Whitelabel
+        {form && (
+          <div className="container">
+            <div className="tabs row">
+              <h4 className="col">
+                <NavLink to={`/forms/${hashid}/integration`}>
+                  Integration
                 </NavLink>
+              </h4>
+              <h4 className="col">
+                <NavLink to={`/forms/${hashid}/submissions`}>
+                  Submissions
+                </NavLink>
+              </h4>
+              <h4 className="col">
+                <NavLink to={`/forms/${hashid}/settings`}>Settings</NavLink>
+              </h4>
+              <h4 className="col">
+                <NavLink to={`/forms/${hashid}/plugins`}>Plugins</NavLink>
+              </h4>
+              {form.features.submission_routing && (
+                <h4 className="col">
+                  <NavLink to={`/forms/${hashid}/routing`}>Routing</NavLink>
+                </h4>
               )}
-            </h4>
+              {form.features.whitelabel && (
+                <h4 className="col">
+                  <NavLink to={`/forms/${hashid}/whitelabel`}>
+                    Whitelabel
+                  </NavLink>
+                </h4>
+              )}
+            </div>
             <Route
               path="/forms/:hashid/integration"
-              render={() => (
-                <Integration form={this.state.form} onUpdate={this.fetchForm} />
-              )}
+              render={() => <Integration form={form} />}
             />
             <Route
               path="/forms/:hashid/submissions"
-              render={() => (
-                <Submissions form={this.state.form} onUpdate={this.fetchForm} />
-              )}
+              render={() => <Submissions form={form} />}
             />
             <Route
               path="/forms/:hashid/settings"
               render={() => (
-                <Settings
-                  form={this.state.form}
-                  history={this.props.history}
-                  onUpdate={this.fetchForm}
-                />
+                <Settings form={form} history={this.props.history} />
               )}
             />
             <Route
-              path="/forms/:hashid/whitelabel"
-              render={() => (
-                <Whitelabel form={this.state.form} onUpdate={this.fetchForm} />
-              )}
+              path="/forms/:hashid/plugins"
+              render={() => <Plugins form={form} />}
             />
-          </>
+            <Route
+              path="/forms/:hashid/whitelabel"
+              render={() => <Whitelabel form={form} />}
+            />
+            <Route
+              path="/forms/:hashid/routing"
+              render={() => <Routing form={form} />}
+            />
+          </div>
         )}
       </>
     )
   }
-
-  async fetchForm() {
-    let hashid = this.props.match.params.hashid
-
-    try {
-      let resp = await fetch(`/api-int/forms/${hashid}`, {
-        credentials: 'same-origin',
-        headers: {Accept: 'application/json'}
-      })
-      let r = await resp.json()
-
-      if (!resp.ok || r.error) {
-        toastr.warning(
-          r.error ? `Error fetching form: ${r.error}` : 'Error fetching form.'
-        )
-        return
-      }
-
-      this.setState({form: r})
-    } catch (e) {
-      console.error(e)
-      toastr.error(`Failed to fetch form, see the console for more details.`)
-    }
-  }
 }
+
+export default props => (
+  <>
+    <AccountContext.Consumer>
+      {({forms}) => <FormPage {...props} forms={forms} />}
+    </AccountContext.Consumer>
+  </>
+)

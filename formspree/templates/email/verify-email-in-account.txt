@@ -1,0 +1,14 @@
+You have successfully added {{ email }} as a valid recipient to your {{config.SERVICE_NAME}} account. Each email address added to {{config.SERVICE_NAME}} must be verified before it can receive submissions.
+
+Please click the following "Verify Email" link to enable {{ email }}:
+Link: {{ link }}
+
+We hope you enjoy using {{config.SERVICE_NAME}} with your new verified recipient email address. If you have any questions, feel free to shoot an email to {{config.CONTACT_EMAIL}}.
+
+Best,
+{{config.SERVICE_NAME}} Team
+
+---
+
+- Why did I receive this?
+This email address was added as a valid recipient on {{config.SERVICE_NAME}}. If this wasn't you, do nothing. This is the only email you will get.

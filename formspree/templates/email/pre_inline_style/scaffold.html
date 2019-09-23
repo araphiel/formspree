@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Confirm Form</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700|Open+Sans:400,700|Source+Code+Pro" rel="stylesheet" data-premailer="ignore">
+    <link href="formspree/templates/email/pre_inline_style/email_styles.css" media="all" rel="stylesheet" type="text/css" />
+    <style media="screen" type="text/css" data-premailer="ignore">
+      @media only screen and (max-width: 640px) {
+        h1, h2, h3, h4 {
+          font-weight: 700 !important;
+          margin: 22px 0 5px !important;
+        }
+        h1 {
+          font-size: 22px !important;
+        }
+        h2 {
+          font-size: 18px !important;
+        }
+        h3 {
+          font-size: 16px !important;
+        }
+        .container {
+          padding-top: 22px !important;
+        }
+        .content-wrap {
+          padding: 11px !important;
+        }
+      }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "http://schema.org",
+        "@type": "EmailMessage",
+        "potentialAction": {
+          "@type": "ConfirmAction",
+          "name": "Confirm form",
+          "handler": {
+            "@type": "HttpActionHandler",
+            "url": "{{ nonce_link }}"
+          }
+        },
+        "description": "Confirm form on {{ host }}"
+      }
+    </script>
+  </head>
+  <body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" bgcolor="#ffffff" itemscope itemtype="http://schema.org/EmailMessage">
+
+    <!-- body wrapper -->
+    <table cellpadding="0" cellspacing="0" border="0" bgcolor="#f9f9f8" class="body-wrap">
+      <tr>
+        <td valign="top" align="center">
+
+          <!-- email wrapper -->
+          <table cellpadding="0" cellspacing="0" border="0" class="email-wrap">
+            <tr>
+              <td class="container">
+
+                <!-- header -->
+                <table cellpadding="0" cellspacing="0" border="0" class="header">
+                  <tr>
+                    <td align="center">
+                      <div class="brand-mark">
+                        <img src="{{config.CDN_URL }}/static/img/formspree-logo-mark.png" alt="Formspree Logo Mark" width="66px" height="66px" class="logo">
+                      </div>
+                      <p class="email-title">Formspree Confirmation</p>
+                    </td>
+                  </tr>
+                </table>
+                <!-- /header -->
+
+                <!-- main wrapper -->
+                <table cellpadding="0" cellspacing="0" border="0" class="main content">
+                  <tr>
+                    <td class="content-wrap">
+
+                      <!-- content wrapper -->
+
+                      
+
+                      <!-- /content wrapper -->
+
+                    </td>
+                  </tr>
+                </table>
+                <!-- /main wrapper -->
+
+                <!-- footer -->
+                <table cellpadding="0" cellspacing="0" border="0" class="footer">
+                  <tr>
+                    <td align="center" class="aligncenter content-block">Why did I receive this?<br>
+                      This email address is configured as a recipient using the {{config.SERVICE_NAME}} API on {{host}}. If this isn't you, no worries. Do not click 'Confirm Form,' and this is the only email you'll get. If you have any questions, please contact the <a href="mailto:{{config.CONTACT_EMAIL}}">Formspree Team</a>.<br>
+                    </td>
+                  </tr>
+                  {% include "footer.xml" %}
+                </table>
+                <!-- /footer -->
+
+              </td>
+            </tr>
+          </table>
+          <!-- /email wrapper  -->
+
+        </td>
+      </tr>
+    </table>
+    <!-- /body wrapper -->
+
+  </body>
+</html>

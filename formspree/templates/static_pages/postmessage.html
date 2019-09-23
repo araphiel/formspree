@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="{{ lang or 'en' }}">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="{{config.SERVICE_URL}}/static/img/favicon.ico">
+</head>
+<body>
+  <script>
+    var data = {{data|tojson|safe}} || {}
+    data.hash = location.hash
+    opener.postMessage(data, location.origin)
+    //# sourceURL=closescript.js
+  </script>
+</body></html>

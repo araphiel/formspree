@@ -1,98 +1,58 @@
 {
   "name": "formspree",
   "description": "",
-  "scripts": {
-  },
+  "scripts": {},
   "env": {
     "ACCOUNT_SENDER": {
-      "required": true
+      "required": false
     },
     "API_ROOT": {
-      "required": true
+      "required": true,
+      "value": "https://formspree.io"
     },
     "ARCHIVED_SUBMISSIONS_LIMIT": {
-      "required": true
+      "required": false
     },
     "CONTACT_EMAIL": {
-      "required": true
+      "required": true,
+      "value": "team@formspree.io"
     },
     "CONTACT_FORM_HASHID": {
-      "required": true
+      "required": false
     },
     "DEFAULT_SENDER": {
-      "required": true
+      "required": false
+    },
+    "FLASK_APP": {
+      "required": true,
+      "value": "formspree"
     },
     "HASHIDS_SALT": {
-      "required": true
-    },
-    "HEROKU_POSTGRESQL_JADE_URL": {
-      "required": true
-    },
-    "LIBRATO_PASSWORD": {
-      "required": true
-    },
-    "LIBRATO_TOKEN": {
-      "required": true
-    },
-    "LIBRATO_USER": {
-      "required": true
-    },
-    "MAILGUN_API_KEY": {
-      "required": true
-    },
-    "MAILGUN_DOMAIN": {
-      "required": true
-    },
-    "MAILGUN_PUBLIC_KEY": {
-      "required": true
-    },
-    "MAILGUN_SMTP_LOGIN": {
-      "required": true
-    },
-    "MAILGUN_SMTP_PASSWORD": {
-      "required": true
-    },
-    "MAILGUN_SMTP_PORT": {
-      "required": true
-    },
-    "MAILGUN_SMTP_SERVER": {
-      "required": true
+      "required": true,
+      "generator": "secret"
     },
     "NEWSLETTER_EMAIL": {
-      "required": true
+      "required": false
     },
     "NONCE_SECRET": {
-      "required": true
-    },
-    "PAPERTRAIL_API_TOKEN": {
-      "required": true
-    },
-    "PGSTUDIO_URL": {
-      "required": true
+      "required": true,
+      "generator": "secret"
     },
     "RATE_LIMIT": {
-      "required": true
+      "required": false
     },
     "RECAPTCHA_ENABLED": {
-      "required": true
+      "required": false
     },
     "RECAPTCHA_KEY": {
-      "required": true
+      "required": false
     },
     "RECAPTCHA_SECRET": {
-      "required": true
-    },
-    "REDIS_URL": {
-      "required": true
-    },
-    "REDISTOGO_URL": {
-      "required": true
+      "required": false
     },
     "SECRET_KEY": {
-      "required": true
-    },
-    "SENDGRID_API_KEY": {
-      "required": true
+      "required": true,
+      "generator": "secret"
     },
     "SENDGRID_PASSWORD": {
       "required": true
@@ -101,6 +61,10 @@
       "required": true
     },
     "SERVICE_NAME": {
+      "required": true,
+      "value": "Formspree"
+    },
+    "HEROKU_APP_NAME": {
       "required": true
     },
     "SERVICE_UPGRADE": {
@@ -120,13 +84,9 @@
     },
     "STRIPE_TEST_SECRET_KEY": {
       "required": true
-    },
-    "TYPEKIT_KEY": {
-      "required": true
     }
   },
-  "formation": {
-  },
+  "formation": {},
   "addons": [
     "librato",
     "mailgun",
@@ -136,9 +96,27 @@
     "redistogo",
     "sendgrid"
   ],
-  "buildpacks": [
-    {
-      "url": "heroku/python"
+  "environments": {
+    "test": {
+      "buildpacks": [
+        {"url": "heroku/python"},
+        {"url": "heroku/nodejs"},
+        {"url": "https://github.com/heroku/heroku-buildpack-google-chrome"}
+      ],
+      "env": {
+        "HASHIDS_SALT": "a salt",
+        "NONCE_SECRET": "y0ur_n0nc3_s3cr3t",
+        "SECRET_KEY": "y0ur_s3cr3t_k3y",
+        "FLASK_APP": "formspree",
+        "CDN_DEBUG": "true",
+        "HEROKU_CI": "true"
+      },
+      "addons": ["heroku-postgresql:in-dyno", "heroku-redis:in-dyno"],
+      "scripts": {
+        "test-setup": "flask",
+        "test": "flask test"
+      }
     }
-  ]
+  },
+  "buildpacks": [{"url": "heroku/python"}, {"url": "heroku/nodejs"}]
 }

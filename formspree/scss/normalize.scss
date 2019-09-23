@@ -131,7 +131,7 @@ body {
 
 a {
     // 1
-    
+
     background: transparent;
 
     // 2
@@ -300,6 +300,11 @@ sub {
 // =============================================================================
 // Lists
 // =============================================================================
+
+ol {
+  // overrides padding-inline-start
+  padding-left: 22px;
+}
 
 // Addresses margins set differently in IE6/7
 @if $legacy_support_for_ie {

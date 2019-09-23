@@ -1,67 +1,124 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<meta name="viewport" content="width=device-width" />
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>Overlimit Notification</title>
+  <head>
+    <title>Overlimit Notification</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700|Open+Sans:400,700|Source+Code+Pro" rel="stylesheet" data-premailer="ignore">
     <link href="formspree/templates/email/pre_inline_style/email_styles.css" media="all" rel="stylesheet" type="text/css" />
-</head>
-<body itemscope itemtype="http://schema.org/EmailMessage">
-	<table class="body-wrap">
-		<tr>
-			<td></td>
-			<tr>
-				<td class="header">
-					<img src="{{url_for('static', filename='img/email_headers/form-confirmation@3x.png', _external=True)}}" width="400">
-				</td>
-			</tr>
-			<td class="container" width="600">
-				<div class="content">
-					<table class="main" width="100%" cellpadding="0" cellspacing="0">
-						<tr>
-							<td class="content-wrap">
-								<table width="100%" cellpadding="0" cellspacing="0">
-									<tr>
-										<td class="alert alert-bad">
-											You've passed the {{config.SERVICE_NAME}} monthly limit
-										</td>
-									</tr>
-									<tr>
-										<td class="content-block">
-											Hey there,
-										</td>
-									</tr>
-									<tr>
-										<td class="content-block">
-											Someone just submitted your form on {{host}}.
-										</td>
-									</tr>
-									<tr>
-										<td class="content-block">
-You are past the limit of {{ limit }} free submissions per month. Never fear! We have safely stored the content of this form in our archive. You can access it by logging in at {{ url_for('register', _external=True) }} and upgrading your account.
-										</td>
-									</tr>
-									<tr>
-										<td class="content-block">
-											<a href="{{ config.SERVICE_URL }}/register" class="btn-primary">Retrieve submissions</a>
-										</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-					</table>
-					<div class="footer">
-						<table width="100%">
-							<tr>
-								<td class="aligncenter content-block">You are receiving this because you confirmed this email address on <a href="{{config.SERVICE_URL}}">{{config.SERVICE_NAME}}</a>. If you don't remember doing that, or no longer wish to receive these emails, please remove the form on {{host}} or <a href="{{unconfirm_url}}">click here to unsubscribe</a> from this endpoint.</td>
-							</tr>
-                            {% include "email/footer.html" %}
-						</table>
-					</div>
-				</div>
-			</td>
-			<td></td>
-		</tr>
-	</table>
-</body>
+    <style media="screen" type="text/css" data-premailer="ignore">
+      @media only screen and (max-width: 640px) {
+        h1, h2, h3, h4 {
+          font-weight: 700 !important;
+          margin: 22px 0 5px !important;
+        }
+        h1 {
+          font-size: 22px !important;
+        }
+        h2 {
+          font-size: 18px !important;
+        }
+        h3 {
+          font-size: 16px !important;
+        }
+        .container {
+          padding-top: 22px !important;
+        }
+        .content-wrap {
+          padding: 11px !important;
+        }
+      }
+    </style>
+  </head>
+  <body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" bgcolor="#ffffff" itemscope itemtype="http://schema.org/EmailMessage">
+
+    <!-- body wrapper -->
+    <table cellpadding="0" cellspacing="0" border="0" bgcolor="#f9f9f8" class="body-wrap">
+      <tr>
+        <td valign="top" align="center">
+
+          <!-- email wrapper -->
+          <table cellpadding="0" cellspacing="0" border="0" class="email-wrap">
+            <tr>
+              <td class="container">
+
+                <!-- header -->
+                <table cellpadding="0" cellspacing="0" border="0" class="header">
+                  <tr>
+                    <td align="center">
+                      <div class="brand-mark">
+                        <img src="{{config.CDN_URL }}/static/img/formspree-logo-mark.png" alt="Formspree Logo Mark" width="66px" height="66px" class="logo">
+                      </div>
+                      <p class="email-title">Overlimit Notification</p>
+                    </td>
+                  </tr>
+                </table>
+                <!-- /header -->
+
+                <!-- main wrapper -->
+                <table cellpadding="0" cellspacing="0" border="0" class="main content">
+                  <tr>
+                    <td class="content-wrap">
+
+                      <!-- content wrapper -->
+
+                      <table cellpadding="0" cellspacing="0">
+      									<tr>
+      										<td class="alert alert-bad">
+      											<strong>You've surpassed the {{config.SERVICE_NAME}} monthly limit.</strong>
+      										</td>
+      									</tr>
+      									<tr>
+      										<td class="content-block">
+      											&nbsp;
+      										</td>
+      									</tr>
+      									<tr>
+      										<td class="content-block">
+      											Hey there,<br><br>
+                            Someone just submitted your form on {{host}}.
+      										</td>
+      									</tr>
+      									<tr>
+      										<td class="content-block">
+                            However, you are past the limit of {{ limit }} free submissions per month. Never fear! We have safely stored the content of this form in our submissions archive which you can access by <a href="{{ config.SERVICE_URL }}/plans">signing up for a paid registration</a>.
+      										</td>
+      									</tr>
+      									<tr>
+      										<td class="content-block">
+      											<a href="{{ config.SERVICE_URL }}/plans" class="btn-primary">Retrieve Submissions</a>
+      										</td>
+      									</tr>
+      								</table>
+
+                      <!-- /content wrapper -->
+
+                    </td>
+                  </tr>
+                </table>
+                <!-- /main wrapper -->
+
+                <!-- footer -->
+                <table cellpadding="0" cellspacing="0" border="0" class="footer">
+                  <tr>
+                    <td align="center" class="aligncenter content-block">You are receiving this because you confirmed this email address on <a href="{{config.SERVICE_URL}}">{{config.SERVICE_NAME}}</a>. If you don't remember doing that, or no longer wish to receive these emails, please remove the form on {{host}} or <a href="{{unconfirm_url}}">click here to unsubscribe</a> from this endpoint.<br>
+                    </td>
+                  </tr>
+                  {% include "footer.xml" %}
+                </table>
+                <!-- /footer -->
+
+              </td>
+            </tr>
+          </table>
+          <!-- /email wrapper  -->
+
+        </td>
+      </tr>
+    </table>
+    <!-- /body wrapper -->
+
+  </body>
 </html>

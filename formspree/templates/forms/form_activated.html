@@ -1,0 +1,23 @@
+{% extends 'layouts/message.html' %}
+
+{% block head_scripts %}
+{% include 'amplitude.html' %}
+<script type="text/javascript">
+    amplitude.getInstance().logEvent('Activated', {
+        host: '{{host}}',
+        testing: '{{host}}'.match(/(localhost|test)/g) !== null
+    });
+    var identify = new amplitude.Identify().append('a', '{{email}}');
+    amplitude.getInstance().identify(identify);
+</script>
+{% endblock head_scripts %}
+
+{% block content %}
+<h1>Form Activated</h1>
+<p><strong>Woohoo!</strong> This form is now active. The next time someone submits your form, we'll forward it to your
+    email.</p>
+<p class="small">Form at: <a href="http://{{host}}">{{host}}</a>.
+    <!--View
+    form settings <a href="">here</a>.-->
+</p>
+{% endblock %}

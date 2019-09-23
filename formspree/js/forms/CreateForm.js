@@ -1,267 +1,151 @@
 /** @format */
 
-const url = require('url')
-const isValidUrl = require('valid-url').isWebUri
-const isValidEmail = require('is-valid-email')
+import * as toast from '../toast'
 const React = require('react')
-const toastr = window.toastr
-const fetch = window.fetch
+const {Link} = require('react-router-dom')
 
-import Modal from '../Modal'
+import Modal from '../components/Modal'
+import ajax from '../ajax'
+import LoaderButton from '../components/LoaderButton'
+import {LoadingContext, AccountContext} from '../Dashboard'
 
-export default class CreateForm extends React.Component {
+class CreateForm extends React.Component {
   constructor(props) {
     super(props)
 
     this.openModal = this.openModal.bind(this)
     this.closeModal = this.closeModal.bind(this)
-    this.setEmail = this.setEmail.bind(this)
-    this.setURL = this.setURL.bind(this)
-    this.setSitewide = this.setSitewide.bind(this)
-    this.validate = this.validate.bind(this)
     this.create = this.create.bind(this)
-    this.checkSitewide = this.checkSitewide.bind(this)
 
     this.state = {
       modalOpened: false,
-
-      url: '',
-      email: '',
-      sitewide: false,
-
-      invalid: null,
-      verified: false,
-      disableVerification: false
+      selectLoading: false,
+      name: 'A new form'
     }
   }
 
-  render() {
-    let {
-      email,
-      url: urlv,
-      sitewide,
-      invalid,
-      verified,
-      disableVerification
-    } = this.state
+  static getDerivedStateFromProps(props, state) {
+    // when user has loaded, update internal state
+    if (props.user !== undefined && state.email === undefined) {
+      let owner = props.user.email
+      let verified = props.emails.verified
+      state.email =
+        (verified.includes(owner) && owner) ||
+        (verified.length > 0 && verified[0])
+    }
+    return state
+  }
 
+  renderOptions() {
     return (
-      <div className="col-1-1">
-        <div className="create-form">
-          <a href="#" onClick={this.openModal} className="button">
-            Create a form
-          </a>
+      <>
+        {this.props.emails.verified
+          .map(addr => (
+            <option key={addr} value={addr}>
+              {addr}
+            </option>
+          ))
+          .concat(
+            this.props.emails.pending.map(addr => (
+              <option key={addr} value={addr} disabled>
+                {addr} (pending verification)
+              </option>
+            ))
+          )}
+      </>
+    )
+  }
 
-          <Modal
-            opened={this.state.modalOpened}
-            onClose={this.closeModal}
-            title="Create form"
-          >
-            <div className="container">
-              <form onSubmit={this.create}>
-                <div className="col-1-1">
-                  <h4>Send email to:</h4>
-                  <input
-                    type="email"
-                    onChange={this.setEmail}
-                    value={email}
-                    placeholder="You can point this form to any email address"
-                  />
-                </div>
-                <div className="col-1-1">
-                  <h4>From URL:</h4>
-                  <input
-                    type="url"
-                    onChange={this.setURL}
-                    value={urlv}
-                    placeholder="Leave blank to send confirmation email when first submitted"
-                  />
-                </div>
-                <div className="container">
-                  <div className="col-1-4">
-                    <label
-                      className="hint--bottom"
-                      data-hint="A site-wide form is a form that you can place on all pages of your website -- and you just have to confirm once!"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={sitewide}
-                        onChange={this.setSitewide}
-                        value="true"
-                      />
-                      site-wide
-                    </label>
-                  </div>
-                  <div className="col-3-4 info">
-                    {invalid ? (
-                      <div className="red">
-                        {invalid === 'email' ? (
-                          'Please input a valid email address.'
-                        ) : (
-                          <>
-                            Please input a valid URL, for example:
-                            <span className="code">
-                              {url.resolve(
-                                'http://www.mywebsite.com',
-                                sitewide ? '' : '/contact.html'
-                              )}
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    ) : !sitewide || (sitewide && verified) ? (
-                      <div>&#8203;</div>
-                    ) : (
-                      <span>
-                        Please ensure
-                        <span className="code">
-                          {url.resolve(urlv, '/formspree-verify.txt')}
-                        </span>
-                        exists and contains a line with
-                        <span className="code">{email}</span>
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="col-1-3">
-                  <div className="verify">
-                    <button
-                      style={sitewide ? {} : {visibility: 'hidden'}}
-                      disabled={!sitewide && !invalid && !disableVerification}
-                      onClick={this.checkSitewide}
-                    >
-                      Verify
-                    </button>
-                  </div>
-                </div>
-                <div className="col-1-3">&#8203;</div>
-                <div className="col-1-3">
-                  <div className="create">
-                    <button
-                      type="submit"
-                      disabled={
-                        !((sitewide && verified) || (!sitewide && !invalid))
-                      }
-                    >
-                      Create form
-                    </button>
-                  </div>
-                </div>
-              </form>
+  renderModal() {
+    return (
+      <Modal
+        isOpen={this.state.modalOpened}
+        closing={this.closeModal}
+        className="narrow"
+        title="Create form"
+      >
+        {this.props.emails.verified.length < 1 ? (
+          <>
+            <h4 className="center">You have no verified email addresses.</h4>
+            <div className="center">
+              Please check your inbox for the verification email. You can also
+              link additional email addresses on the{' '}
+              <Link to="/account">account page</Link>.
             </div>
-          </Modal>
-        </div>
+            <div className="row spacer right">
+              <button className="deemphasize" onClick={this.closeModal}>
+                OK
+              </button>
+            </div>
+          </>
+        ) : (
+          <form onSubmit={this.create}>
+            <label>
+              Form name:
+              <input
+                type="name"
+                value={this.state.name}
+                onChange={e => this.setState({name: e.target.value})}
+                placeholder="Your form must have a name."
+                required
+              />
+            </label>
+            <label className="row spacer">
+              Send emails to:
+              <div className="select">
+                <select
+                  value={this.state.email}
+                  onChange={e => this.setState({email: e.target.value})}
+                  required
+                >
+                  {this.renderOptions()}
+                </select>
+              </div>
+            </label>
+            <div>
+              To send to a different email address, please add a Linked Email on
+              the <Link to="/account">account page</Link>.
+            </div>
+            <div className="row spacer">
+              <div className="create-button right">
+                <LoaderButton type="submit">Create form</LoaderButton>
+              </div>
+            </div>
+          </form>
+        )}
+      </Modal>
+    )
+  }
+
+  render() {
+    return (
+      <div className="create-form container">
+        {this.renderModal()}
+        <a href="#" onClick={this.openModal} className="button emphasize">
+          Create a form
+        </a>
       </div>
     )
   }
 
-  setEmail(e) {
-    this.setState({email: e.target.value}, this.validate)
-  }
-
-  setURL(e) {
-    this.setState({url: e.target.value}, this.validate)
-  }
-
-  setSitewide(e) {
-    this.setState({sitewide: e.target.checked}, this.validate)
-  }
-
-  validate() {
-    this.setState(st => {
-      st.invalid = null
-
-      let {email, url: urlv, sitewide} = st
-      urlv = /^https?:\/\//.test(urlv) ? urlv : 'http://' + urlv
-
-      if (!isValidEmail(email)) {
-        st.invalid = 'email'
-        return
-      }
-
-      if (sitewide) {
-        if (urlv && !isValidUrl(urlv)) {
-          st.invalid = 'urlv'
-        }
-      } else {
-        if (urlv && urlv !== 'http://' && !isValidUrl(urlv)) {
-          st.invalid = 'urlv'
-        }
-      }
-
-      return st
-    })
-  }
-
-  async checkSitewide(e) {
-    e.preventDefault()
-
-    try {
-      let resp = await fetch(`/api-int/forms/sitewide-check`, {
-        method: 'POST',
-        body: JSON.stringify({email: this.state.email, url: this.state.url}),
-        credentials: 'same-origin',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-      let r = await resp.json()
-
-      if (!resp.ok || !r.ok) {
-        toastr.warning("The verification file wasn't found.")
-        this.setState({verified: false, disableVerification: true})
-
-        setTimeout(() => {
-          this.setState({disableVerification: false})
-        }, 5000)
-        return
-      }
-
-      toastr.success('The file exists! you can create your site-wide form now.')
-      this.setState({verified: true})
-    } catch (e) {
-      console.error(e)
-      toastr.error(
-        'Failed to call the sitewide verification API, see the console for more details.'
-      )
-    }
-  }
-
   async create(e) {
+    let {name, email} = this.state
+
     e.preventDefault()
 
-    try {
-      let resp = await fetch('/api-int/forms', {
-        method: 'POST',
-        body: JSON.stringify({
-          email: this.state.email,
-          url: this.state.url,
-          sitewide: this.state.sitewide
-        }),
-        credentials: 'same-origin',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-      let r = await resp.json()
-
-      if (!r.ok || r.error) {
-        toastr.warning(
-          r.error
-            ? `Error creating form: ${r.error}`
-            : 'Unexpected error creating form.'
-        )
-        return
+    await ajax({
+      endpoint: '/api-int/forms',
+      method: 'POST',
+      payload: {name, email},
+      errorMsg: 'Error creating form',
+      successMsg: 'Form created!',
+      onSuccess: r => {
+        this.props.reloadSpecificForm(r.hashid)
+        this.props.history.push(`/forms/${r.hashid}/integration`)
       }
+    })
 
-      toastr.success('Form created!')
-      this.props.history.push(`/forms/${r.hashid}/integration`)
-    } catch (e) {
-      console.error(e)
-      toastr.error('Failed to create form, see the console for more details.')
-    }
+    this.props.ready()
   }
 
   openModal(e) {
@@ -270,7 +154,28 @@ export default class CreateForm extends React.Component {
   }
 
   closeModal(e) {
-    e.preventDefault()
+    e && e.preventDefault()
     this.setState({modalOpened: false})
   }
 }
+
+export default props => (
+  <>
+    <AccountContext.Consumer>
+      {({emails, user, reloadAccount, reloadSpecificForm}) => (
+        <LoadingContext.Consumer>
+          {({ready}) => (
+            <CreateForm
+              {...props}
+              user={user}
+              emails={emails}
+              reloadAccount={reloadAccount}
+              reloadSpecificForm={reloadSpecificForm}
+              ready={ready}
+            />
+          )}
+        </LoadingContext.Consumer>
+      )}
+    </AccountContext.Consumer>
+  </>
+)
